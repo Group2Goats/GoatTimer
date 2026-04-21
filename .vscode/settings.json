@@ -1,8 +1,10 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "files.autoSave": "afterDelay"
+  "files.autoSave": "afterDelay",
+  "eslint.workingDirectories": ["packages/frontend", "packages/backend"],
+  "eslint.validate": ["javascript", "javascriptreact"]
 }

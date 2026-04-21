@@ -1,32 +1,28 @@
 import js from "@eslint/js";
 import globals from "globals";
-import json from "@eslint/json";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 import prettier from "eslint-config-prettier";
+import prettierPlugin from "eslint-plugin-prettier";
 
 export default defineConfig([
+  globalIgnores(["dist"]),
   {
-    files: ["**/*.{js,mjs,cjs}"],
-    plugins: { js, prettier },
-    extends: ["js/recommended", prettier],
-    languageOptions: { globals: globals.node },
-  },
-  {
-    files: ["**/*.json"],
-    plugins: { json, prettier },
-    language: "json/json",
-    extends: ["json/recommended", prettier],
-  },
-  {
-    files: ["**/*.jsonc"],
-    plugins: { json, prettier },
-    language: "json/jsonc",
-    extends: ["json/recommended", prettier],
-  },
-  {
-    files: ["**/*.json5"],
-    plugins: { json, prettier },
-    language: "json/json5",
-    extends: ["json/recommended", prettier],
+    files: ["**/*.js"],
+    plugins: {
+      prettier: prettierPlugin,
+    },
+    extends: [js.configs.recommended, prettier],
+    languageOptions: {
+      ecmaVersion: 2021,
+      globals: { ...globals.node, ...globals.jest },
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+      },
+    },
+    rules: {
+      "prettier/prettier": "error",
+      "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
+    },
   },
 ]);

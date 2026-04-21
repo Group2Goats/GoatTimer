@@ -15,7 +15,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write './**/*.{js,jsx,json,css,md}' --config ./.prettierrc"
+    "format": "prettier --write './**/*.{js,jsx,json,css,md}' --config ./.prettierrc",
+    "lint": "npm -w frontend run lint && npm -w backend run lint",
+    "lint:fix": "npm -w frontend run lint:fix && npm -w backend run lint:fix"
   },
   "workspaces": [
     "packages/*"
