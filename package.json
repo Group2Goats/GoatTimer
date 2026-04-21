@@ -1,0 +1,27 @@
+{
+  "name": "goattimer",
+  "version": "1.0.0",
+  "description": "Web application that tracks a users study time",
+  "homepage": "https://github.com/Group2Goats/GoatTimer#readme",
+  "bugs": {
+    "url": "https://github.com/Group2Goats/GoatTimer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Group2Goats/GoatTimer.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write './**/*.{js,jsx,json,css,md}' --config ./.prettierrc"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.3"
+  }
+}
