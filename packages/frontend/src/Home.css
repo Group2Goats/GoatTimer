@@ -1,0 +1,154 @@
+/*colors */
+:root {
+  --celadon: #b7f0ad;
+  --lime-cream: #d2ff96;
+  --lime-cream-2: #edff7a;
+  --golden-glow: #e8d33f;
+  --ochre: #d17b0f;
+}
+
+/*main nav container*/
+.NavRoot {
+  position: relative;
+  display: flex; /*aligns children horizontally */
+  justify-content: center; /*centers nav links on the screen */
+  width: 100%;
+  z-index: 100; /*keeps the navbar above other page content */
+  padding: 15px 0; /*add vertical space inside the navbar */
+  background-color: #ffffff; /*white bg for the main bar */
+  border-bottom: 2px solid var(--ochre);
+  overflow: visible; /*ensures dropdowns can break out of the container */
+}
+
+/* nav list, wrapper immediately holding the individual menu items. */
+.NavList {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  list-style: none; /*removes default bullet points */
+  margin: 0;
+  padding: 0;
+  gap: 20px; /*adds exactly 20px of space between each menu item */
+}
+
+/*the clickable buttons/text sitting in the main navigation bar */
+.NavTrigger,
+.NavLink {
+  padding: 8px 12px;
+  outline: none; /*removes focus outline */
+  user-select: none; /*prevent selection*/
+  font-weight: 500;
+  line-height: 1;
+  border-radius: 4px;
+  font-size: 16px;
+  color: var(--ochre); /*text color*/
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: none; /*removes underlines*/
+  transition: background-color 0.2s ease; 
+}
+
+/*hover state for triggers and links */
+.NavTrigger:hover,
+.NavLink:hover {
+  background-color: var(--lime-cream-2);
+}
+
+/*position dropdown*/
+.ViewportPosition {
+  position: absolute;
+  top: 100%; /*bottom edge of navbar*/
+  left: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  perspective: 2000px; 
+  padding-top: 10px; 
+}
+
+/*dropdown viewport the visible box that holds the dropdown content. radix animates its size.*/
+.NavViewport {
+  position: relative;
+  width: var(--radix-navigation-menu-viewport-width, 220px);
+  height: var(--radix-navigation-menu-viewport-height, auto);
+  min-width: 200px;
+  background-color: var(--lime-cream);
+  border-radius: 6px;
+  overflow: hidden; /*hides content that slides outside the box during animations */
+  border: 1px solid var(--golden-glow);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform-origin: top center; /*ensures the menu scales out from the top, not the middle */
+  transition: width 0.2s ease, height 0.2s ease; /*animates the box resizing when switching menus */
+}
+
+.TestDropdownContent {
+  padding: 20px;
+  min-width: 200px;
+  color: var(--ochre);
+}
+
+.NavContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  min-width: max-content; /*prevents the text inside from wrapping awkwardly */
+}
+
+@media (max-width: 768px) {
+  .NavContent {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+
+@keyframes enterFromRight {
+  from { opacity: 0; transform: translateX(200px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes enterFromLeft {
+  from { opacity: 0; transform: translateX(-200px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes exitToRight {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(200px); }
+}
+
+@keyframes exitToLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-200px); }
+}
+
+/*radix auto-applies these data attributes based on your mouse movement direction */
+.NavContent[data-motion="from-start"] { animation: enterFromLeft 0.2s ease; }
+.NavContent[data-motion="from-end"] { animation: enterFromRight 0.2s ease; }
+.NavContent[data-motion="to-start"] { animation: exitToLeft 0.2s ease; }
+.NavContent[data-motion="to-end"] { animation: exitToRight 0.2s ease; }
+
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: rotateX(-30deg) scale(0.9); }
+  to { opacity: 1; transform: rotateX(0deg) scale(1); }
+}
+
+@keyframes scaleOut {
+  from { opacity: 1; transform: rotateX(0deg) scale(1); }
+  to { opacity: 0; transform: rotateX(-10deg) scale(0.95); }
+}
+
+/*radix auto-applies 'open' when hovering and 'closed' when leaving the entire navbar */
+.NavViewport[data-state="open"] {
+  animation: scaleIn 0.2s ease;
+  pointer-events: auto; /* Allows clicking inside the menu when open */
+}
+
+.NavViewport[data-state="closed"] {
+  animation: scaleOut 0.2s ease;
+  pointer-events: none; /* Prevents invisible clicks while the menu is fading out */
+}
