@@ -5,20 +5,18 @@ import "./Home.css";
 const HomePage = () => {
   return (
     <div>
-      {/*  
-      */}
+      {/*
+       */}
       <NavigationMenu.Root className="NavRoot">
-        
         {}
         <NavigationMenu.List className="NavList">
-          
           {}
           <NavigationMenu.Item>
             {}
             <NavigationMenu.Trigger className="NavTrigger">
               Test Menu 1
             </NavigationMenu.Trigger>
-            
+
             {}
             <NavigationMenu.Content className="NavContent">
               <div className="TestDropdownContent">Test Dropdown Text A</div>
@@ -40,7 +38,6 @@ const HomePage = () => {
               Test Link
             </NavigationMenu.Link>
           </NavigationMenu.Item>
-
         </NavigationMenu.List>
 
         {}
