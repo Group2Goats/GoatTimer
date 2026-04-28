@@ -1,154 +1,394 @@
-/*colors */
 :root {
-  --celadon: #b7f0ad;
-  --lime-cream: #d2ff96;
-  --lime-cream-2: #edff7a;
-  --golden-glow: #e8d33f;
-  --ochre: #d17b0f;
+  --brand-black: #000807;
+  --white: #ffffff;
+  --bg: #fbf9ff;
+  --screen: #b3b7ee;
+  --screen-dark: #9395d3;
+  --shadow: #a2a3bb;
+  --gray-1: #868686;
+  --gray-2: #919191;
 }
 
-/*main nav container*/
-.NavRoot {
-  position: relative;
-  display: flex; /*aligns children horizontally */
-  justify-content: center; /*centers nav links on the screen */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
   width: 100%;
-  z-index: 100; /*keeps the navbar above other page content */
-  padding: 15px 0; /*add vertical space inside the navbar */
-  background-color: #ffffff; /*white bg for the main bar */
-  border-bottom: 2px solid var(--ochre);
-  overflow: visible; /*ensures dropdowns can break out of the container */
-}
-
-/* nav list, wrapper immediately holding the individual menu items. */
-.NavList {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  list-style: none; /*removes default bullet points */
+  min-height: 100%;
   margin: 0;
   padding: 0;
-  gap: 20px; /*adds exactly 20px of space between each menu item */
 }
 
-/*the clickable buttons/text sitting in the main navigation bar */
-.NavTrigger,
-.NavLink {
-  padding: 8px 12px;
-  outline: none; /*removes focus outline */
-  user-select: none; /*prevent selection*/
-  font-weight: 500;
-  line-height: 1;
-  border-radius: 4px;
-  font-size: 16px;
-  color: var(--ochre); /*text color*/
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-decoration: none; /*removes underlines*/
-  transition: background-color 0.2s ease; 
+body {
+  background: var(--bg);
+  color: var(--brand-black);
+  overflow-x: hidden;
 }
 
-/*hover state for triggers and links */
-.NavTrigger:hover,
-.NavLink:hover {
-  background-color: var(--lime-cream-2);
+.home {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
 }
 
-/*position dropdown*/
-.ViewportPosition {
-  position: absolute;
-  top: 100%; /*bottom edge of navbar*/
-  left: 0;
+/* NAV */
+.NavRoot {
+  position: relative;
+  width: 100%;
   display: flex;
   justify-content: center;
-  width: 100%;
-  perspective: 2000px; 
-  padding-top: 10px; 
+  padding-top: 22px;
+  z-index: 20;
 }
 
-/*dropdown viewport the visible box that holds the dropdown content. radix animates its size.*/
+.NavList {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 34px;
+  list-style: none;
+  margin: 0;
+  padding: 0 16px;
+  flex-wrap: wrap;
+}
+
+.NavTrigger,
+.NavLink {
+  background: transparent;
+  border: none;
+  padding: 8px 6px;
+  color: var(--brand-black);
+  text-decoration: none;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1rem, 1.3vw, 1.7rem);
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.NavTrigger:hover,
+.NavLink:hover {
+  opacity: 0.7;
+}
+
+.ViewportPosition {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  perspective: 2000px;
+  pointer-events: none;
+}
+
 .NavViewport {
   position: relative;
-  width: var(--radix-navigation-menu-viewport-width, 220px);
-  height: var(--radix-navigation-menu-viewport-height, auto);
-  min-width: 200px;
-  background-color: var(--lime-cream);
-  border-radius: 6px;
-  overflow: hidden; /*hides content that slides outside the box during animations */
-  border: 1px solid var(--golden-glow);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transform-origin: top center; /*ensures the menu scales out from the top, not the middle */
-  transition: width 0.2s ease, height 0.2s ease; /*animates the box resizing when switching menus */
-}
-
-.TestDropdownContent {
-  padding: 20px;
-  min-width: 200px;
-  color: var(--ochre);
+  width: var(--radix-navigation-menu-viewport-width);
+  height: var(--radix-navigation-menu-viewport-height);
+  min-width: 240px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--white);
+  border: 2px solid rgba(0, 8, 7, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+  pointer-events: auto;
+  transition: width 0.2s ease, height 0.2s ease;
 }
 
 .NavContent {
   position: absolute;
   top: 0;
   left: 0;
-  width: auto;
-  min-width: max-content; /*prevents the text inside from wrapping awkwardly */
+  width: max-content;
 }
 
-@media (max-width: 768px) {
-  .NavContent {
-    width: 100%;
-    min-width: 0;
+.DropdownCard {
+  min-width: 260px;
+  padding: 20px 22px;
+  background: var(--screen);
+  color: var(--brand-black);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+@keyframes enterFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
-
-@keyframes enterFromRight {
-  from { opacity: 0; transform: translateX(200px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
 @keyframes enterFromLeft {
-  from { opacity: 0; transform: translateX(-200px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes exitToRight {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(200px); }
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
 }
 
 @keyframes exitToLeft {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(-200px); }
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
 }
 
-/*radix auto-applies these data attributes based on your mouse movement direction */
-.NavContent[data-motion="from-start"] { animation: enterFromLeft 0.2s ease; }
-.NavContent[data-motion="from-end"] { animation: enterFromRight 0.2s ease; }
-.NavContent[data-motion="to-start"] { animation: exitToLeft 0.2s ease; }
-.NavContent[data-motion="to-end"] { animation: exitToRight 0.2s ease; }
+.NavContent[data-motion="from-start"] {
+  animation: enterFromLeft 0.22s ease;
+}
 
+.NavContent[data-motion="from-end"] {
+  animation: enterFromRight 0.22s ease;
+}
+
+.NavContent[data-motion="to-start"] {
+  animation: exitToLeft 0.22s ease;
+}
+
+.NavContent[data-motion="to-end"] {
+  animation: exitToRight 0.22s ease;
+}
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: rotateX(-30deg) scale(0.9); }
-  to { opacity: 1; transform: rotateX(0deg) scale(1); }
+  from {
+    opacity: 0;
+    transform: rotateX(-10deg) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: rotateX(0deg) scale(1);
+  }
 }
 
 @keyframes scaleOut {
-  from { opacity: 1; transform: rotateX(0deg) scale(1); }
-  to { opacity: 0; transform: rotateX(-10deg) scale(0.95); }
+  from {
+    opacity: 1;
+    transform: rotateX(0deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: rotateX(-8deg) scale(0.98);
+  }
 }
 
-/*radix auto-applies 'open' when hovering and 'closed' when leaving the entire navbar */
 .NavViewport[data-state="open"] {
   animation: scaleIn 0.2s ease;
-  pointer-events: auto; /* Allows clicking inside the menu when open */
 }
 
 .NavViewport[data-state="closed"] {
   animation: scaleOut 0.2s ease;
-  pointer-events: none; /* Prevents invisible clicks while the menu is fading out */
+}
+
+/* HERO */
+.hero {
+  width: 100%;
+  min-height: calc(100vh - 86px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 34px 20px 60px;
+}
+
+.heroTitle {
+  margin: 72px 0 42px;
+  color: #000000;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(4rem, 8vw, 7.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-align: center;
+}
+
+/* DEVICE / HERO CARD */
+.mockupWrap {
+  position: relative;
+  width: min(1150px, 92vw);
+}
+
+.mockupShadow {
+  position: absolute;
+  left: 50%;
+  bottom: -26px;
+  transform: translateX(-50%);
+  width: 96%;
+  height: 76%;
+  background: var(--shadow);
+  border-radius: 20px;
+  z-index: 0;
+}
+
+.mockup {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 1.72 / 1;
+  background: #000000;
+  border-radius: 38px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 18px 36px rgba(0, 0, 0, 0.12);
+}
+
+.mockupCamera {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #171717;
+  z-index: 2;
+}
+
+.mockupScreen {
+  position: absolute;
+  inset: 28px 20px 20px;
+  border-radius: 28px;
+  background: var(--screen);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  padding: 40px 28px;
+}
+
+.heroButton {
+  width: min(430px, 78%);
+  min-height: 92px;
+  border-radius: 999px;
+  border: 4px solid var(--brand-black);
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.heroButton:hover {
+  transform: translateY(-2px);
+}
+
+.heroButtonPrimary {
+  background: var(--screen);
+  color: var(--brand-black);
+}
+
+.heroButtonSecondary {
+  background: var(--bg);
+  color: var(--brand-black);
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+  .heroTitle {
+    margin-top: 48px;
+    margin-bottom: 28px;
+  }
+
+  .mockupScreen {
+    gap: 22px;
+    padding: 28px 18px;
+  }
+
+  .heroButton {
+    width: min(440px, 88%);
+    min-height: 72px;
+    border-width: 3px;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+  }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .NavRoot {
+    padding-top: 14px;
+  }
+
+  .NavList {
+    gap: 12px;
+  }
+
+  .NavTrigger,
+  .NavLink {
+    font-size: 0.95rem;
+  }
+
+  .ViewportPosition {
+    display: none;
+  }
+
+  .hero {
+    padding: 18px 12px 36px;
+  }
+
+  .heroTitle {
+    margin-top: 30px;
+    font-size: clamp(3.2rem, 16vw, 4.8rem);
+  }
+
+  .mockupWrap {
+    width: 100%;
+  }
+
+  .mockupShadow {
+    display: none;
+  }
+
+  .mockup {
+    aspect-ratio: auto;
+    min-height: 460px;
+    border-radius: 24px;
+  }
+
+  .mockupScreen {
+    position: relative;
+    inset: auto;
+    margin: 14px;
+    min-height: 428px;
+    border-radius: 18px;
+    gap: 18px;
+    justify-content: center;
+  }
+
+  .heroButton {
+    width: 100%;
+    min-height: 64px;
+    font-size: clamp(1.2rem, 6vw, 1.7rem);
+    padding: 12px 16px;
+  }
 }

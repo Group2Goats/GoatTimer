@@ -4,51 +4,72 @@ import "./Home.css";
 
 const HomePage = () => {
   return (
-    <div>
-      {/*
-       */}
+    <div className="home">
       <NavigationMenu.Root className="NavRoot">
-        {}
         <NavigationMenu.List className="NavList">
-          {}
           <NavigationMenu.Item>
-            {}
             <NavigationMenu.Trigger className="NavTrigger">
-              Test Menu 1
+              Focus
             </NavigationMenu.Trigger>
-
-            {}
             <NavigationMenu.Content className="NavContent">
-              <div className="TestDropdownContent">Test Dropdown Text A</div>
+              <div className="DropdownCard">
+                Build distraction-free study sessions.
+              </div>
             </NavigationMenu.Content>
           </NavigationMenu.Item>
 
           <NavigationMenu.Item>
             <NavigationMenu.Trigger className="NavTrigger">
-              Test Menu 2
+              Complete
             </NavigationMenu.Trigger>
             <NavigationMenu.Content className="NavContent">
-              <div className="TestDropdownContent">Test Dropdown Text B</div>
+              <div className="DropdownCard">
+                Track goals and finish what you planned.
+              </div>
             </NavigationMenu.Content>
           </NavigationMenu.Item>
 
-          {}
           <NavigationMenu.Item>
-            <NavigationMenu.Link className="NavLink" href="#">
-              Test Link
+            <NavigationMenu.Trigger className="NavTrigger">
+              Win
+            </NavigationMenu.Trigger>
+            <NavigationMenu.Content className="NavContent">
+              <div className="DropdownCard">
+                Turn consistency into real progress.
+              </div>
+            </NavigationMenu.Content>
+          </NavigationMenu.Item>
+
+          <NavigationMenu.Item>
+            <NavigationMenu.Link className="NavLink" href="#about">
+              About
             </NavigationMenu.Link>
           </NavigationMenu.Item>
         </NavigationMenu.List>
 
-        {}
         <div className="ViewportPosition">
-          {}
           <NavigationMenu.Viewport className="NavViewport" />
         </div>
       </NavigationMenu.Root>
 
-      {}
-      <main style={{ minHeight: "100vh" }}></main>
+      <main className="hero">
+        <h1 className="heroTitle">GoatTimer</h1>
+
+        <section className="mockupWrap">
+          <div className="mockupShadow" />
+          <div className="mockup">
+            <div className="mockupCamera" />
+            <div className="mockupScreen">
+              <button className="heroButton heroButtonPrimary">
+                Get Started
+              </button>
+              <button className="heroButton heroButtonSecondary">
+                I already have an account
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };
