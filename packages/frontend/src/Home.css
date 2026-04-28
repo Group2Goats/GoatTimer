@@ -217,6 +217,17 @@ body {
   padding: 34px 20px 60px;
 }
 
+.heroSubtitle {
+  margin-top: 10px;
+  margin-bottom: 32px;
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gray-2);
+  font-weight: 600;
+  text-align: center;
+}
+
 .heroTitle {
   margin: 72px 0 42px;
   color: #000000;

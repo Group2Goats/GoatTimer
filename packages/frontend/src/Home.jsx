@@ -54,7 +54,7 @@ const HomePage = () => {
 
       <main className="hero">
         <h1 className="heroTitle">GoatTimer</h1>
-
+        <p className="heroSubtitle">Study to become the G.O.A.T</p>
         <section className="mockupWrap">
           <div className="mockupShadow" />
           <div className="mockup">
