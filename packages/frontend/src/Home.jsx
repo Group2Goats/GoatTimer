@@ -13,7 +13,7 @@ const HomePage = () => {
             </NavigationMenu.Trigger>
             <NavigationMenu.Content className="NavContent">
               <div className="DropdownCard">
-                Build distraction-free study sessions.
+                Distraction free study sessions.
               </div>
             </NavigationMenu.Content>
           </NavigationMenu.Item>
