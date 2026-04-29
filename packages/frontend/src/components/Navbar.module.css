@@ -1,0 +1,171 @@
+/* NAV */
+.NavRoot {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 22px;
+  z-index: 20;
+}
+
+.NavList {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 34px;
+  list-style: none;
+  margin: 0;
+  padding: 0 16px;
+  flex-wrap: wrap;
+}
+
+.NavTrigger,
+.NavLink {
+  background: transparent;
+  border: none;
+  padding: 8px 6px;
+  color: var(--brand-black);
+  text-decoration: none;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1rem, 1.3vw, 1.7rem);
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.NavTrigger:hover,
+.NavLink:hover {
+  opacity: 0.7;
+}
+
+.ViewportPosition {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  perspective: 2000px;
+  pointer-events: none;
+}
+
+.NavViewport {
+  position: relative;
+  width: var(--radix-navigation-menu-viewport-width);
+  height: var(--radix-navigation-menu-viewport-height);
+  min-width: 240px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--white);
+  border: 2px solid rgba(0, 8, 7, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+  pointer-events: auto;
+  transition: width 0.2s ease, height 0.2s ease;
+}
+
+.NavContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: max-content;
+}
+
+.DropdownCard {
+  min-width: 260px;
+  padding: 20px 22px;
+  background: var(--screen);
+  color: var(--brand-black);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+@keyframes enterFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes enterFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes exitToRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes exitToLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+.NavContent[data-motion="from-start"] {
+  animation: enterFromLeft 0.22s ease;
+}
+
+.NavContent[data-motion="from-end"] {
+  animation: enterFromRight 0.22s ease;
+}
+
+.NavContent[data-motion="to-start"] {
+  animation: exitToLeft 0.22s ease;
+}
+
+.NavContent[data-motion="to-end"] {
+  animation: exitToRight 0.22s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: rotateX(-10deg) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: rotateX(0deg) scale(1);
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: rotateX(0deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: rotateX(-8deg) scale(0.98);
+  }
+}
+
+.NavViewport[data-state="open"] {
+  animation: scaleIn 0.2s ease;
+}
+
+.NavViewport[data-state="closed"] {
+  animation: scaleOut 0.2s ease;
+}
