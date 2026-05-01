@@ -1,0 +1,39 @@
+.about{
+    justify-self: center;
+    align-self: center;
+    width: clamp(200px, 80%, 90%)
+}
+
+.aboutList {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--sans);
+  width: 100%;
+  padding: 10px;
+  background: var(--screen);
+  border-radius: 38px;
+  border: 10px inset rgba(43, 81, 156, 0.3);
+  box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.3);
+}
+
+.aboutItem {
+  text-align: left;
+}
+
+.aboutP {
+    color: var(--social-bg)
+}
+
+.featureShadow {
+  position: absolute;
+  left: 50%;
+  bottom: -26px;
+  transform: translateX(-50%);
+  width: 96%;
+  height: 76%;
+  background: var(--shadow);
+  border-radius: 20px;
+  z-index: 0;
+}
