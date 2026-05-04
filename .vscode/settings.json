@@ -6,5 +6,8 @@
   },
   "files.autoSave": "afterDelay",
   "eslint.workingDirectories": ["packages/frontend", "packages/backend"],
-  "eslint.validate": ["javascript", "javascriptreact"]
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact"
+  ]
 }
