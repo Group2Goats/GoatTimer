@@ -1,0 +1,156 @@
+.committed-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg, #fbf9ff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+}
+
+.committed-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  color: #000807;
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+.committed-subtitle {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  color: #444;
+  margin: 0 0 40px;
+  text-align: center;
+}
+
+/* ── Tier cards ── */
+.tier-cards {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.tier-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 190px;
+  height: 170px;
+  border: 2px solid #999;
+  border-radius: 16px;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.15s;
+  padding: 18px 12px;
+}
+
+.tier-card:hover {
+  transform: translateY(-2px);
+}
+
+.tier-card--selected {
+  background: #b3b7ee;
+  border-color: #b3b7ee;
+}
+
+.tier-label {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  color: #000807;
+}
+
+.tier-hours {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  color: #000807;
+}
+
+.tier-hours strong {
+  font-weight: 700;
+}
+
+.tier-daily {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* ── Action buttons ── */
+.committed-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-back,
+.btn-letsgo {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+  min-height: 56px;
+}
+
+.btn-back:hover,
+.btn-letsgo:hover {
+  transform: translateY(-2px);
+}
+
+.btn-back {
+  background: transparent;
+  border: 2px solid #999;
+  color: #000807;
+  padding: 12px 48px;
+}
+
+.btn-letsgo {
+  background: #b3b7ee;
+  border: 2px solid #b3b7ee;
+  color: #000807;
+  padding: 12px 72px;
+  font-style: italic;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .tier-cards {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .tier-card {
+    width: 80%;
+    max-width: 280px;
+    height: auto;
+    padding: 20px 16px;
+  }
+
+  .committed-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-back,
+  .btn-letsgo {
+    width: 80%;
+    max-width: 280px;
+  }
+}

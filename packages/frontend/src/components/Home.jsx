@@ -20,7 +20,12 @@ const HomePage = () => {
                 </button>
               </Link>
               <button className="heroButton heroButtonSecondary">
-                I already have an account
+                <Link
+                  to="/login"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  I already have an account
+                </Link>
               </button>
             </div>
           </div>

@@ -2,6 +2,12 @@
 
 Web application that tracks a users study time
 
+## How to Run 
+
+On the: npm install
+In one terminal start the backend: npm -w backend run dev
+In another terminal : npm -w frontend run dev
+
 # Contributing
  - Formatting is default javascript and Prettier styles
  - At root & frontend & backend run "npm i" on all 3 directories
