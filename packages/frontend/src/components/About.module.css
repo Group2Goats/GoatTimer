@@ -1,17 +1,18 @@
-.about{
-    justify-self: center;
-    align-self: center;
-    width: clamp(200px, 80%, 90%)
+.about {
+  justify-self: center;
+  align-self: center;
+  width: clamp(200px, 80%, 90%);
 }
 
 .aboutList {
   display: flex;
+  padding: 5px;
   justify-content: center;
   flex-direction: column;
   align-items: center;
   font-family: var(--sans);
   width: 100%;
-  padding: 10px;
+  padding: 20px;
   background: var(--screen);
   border-radius: 38px;
   border: 10px inset rgba(43, 81, 156, 0.3);
@@ -20,10 +21,11 @@
 
 .aboutItem {
   text-align: left;
+  padding: 5px;
 }
 
 .aboutP {
-    color: var(--social-bg)
+  color: var(--social-bg);
 }
 
 .featureShadow {
