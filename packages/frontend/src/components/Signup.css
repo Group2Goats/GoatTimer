@@ -1,0 +1,97 @@
+.signup-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg, #fbf9ff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px 60px;
+}
+
+.signup-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  color: #000807;
+  margin: 24px 0 8px;
+  text-align: center;
+}
+
+.signup-toggle {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+  color: #444;
+  margin: 0 0 32px;
+}
+
+.signup-toggle a {
+  color: #000807;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  width: min(480px, 90%);
+}
+
+.signup-label {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000807;
+  margin-bottom: 4px;
+}
+
+.signup-input {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  padding: 12px 14px;
+  border: none;
+  border-bottom: 2px solid #b3b7ee;
+  background: transparent;
+  color: #000807;
+  margin-bottom: 20px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.signup-input:focus {
+  border-bottom-color: #7b7fc4;
+}
+
+.signup-input::placeholder {
+  color: #999;
+}
+
+.signup-error {
+  color: #c0392b;
+  font-size: 0.9rem;
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+.signup-button {
+  align-self: center;
+  margin-top: 12px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+  font-weight: 700;
+  background: #b3b7ee;
+  color: #000807;
+  border: 2px solid #b3b7ee;
+  border-radius: 999px;
+  padding: 14px 56px;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.signup-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}

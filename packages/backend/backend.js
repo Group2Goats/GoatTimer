@@ -68,6 +68,34 @@ app.put("/api/users/:id", async (req, res) => {
   }
 });
 
+// Update user commitment level
+app.patch("/api/users/:id/commitment", async (req, res) => {
+  try {
+    const { commitmentLevel } = req.body;
+    const levelToHours = { low: 70, medium: 105, hard: 140 };
+
+    if (!commitmentLevel || !levelToHours[commitmentLevel]) {
+      return res
+        .status(400)
+        .json({ error: "Invalid commitment level. Use: low, medium, or hard" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        commitmentLevel,
+        weeklyGoalHours: levelToHours[commitmentLevel],
+      },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 // Delete user by ID
 app.delete("/api/users/:id", async (req, res) => {
   try {
