@@ -7,6 +7,7 @@ import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
 import Committed from "./components/Committed.jsx";
 import Navbar from "./components/Navbar.jsx";
+import Dashboard from "./components/Dashboard.jsx";
 import About from "./components/About.jsx";
 
 const root = document.getElementById("root");

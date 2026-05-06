@@ -1,0 +1,239 @@
+:root {
+  --brand-black: #000000;
+  --white: #ffffff;
+  --bg: #faf9ff;
+  --accent-purple: #9b9ece; 
+  --accent-light: #d1d2e8; 
+  --border-color: #d8d8d8;
+  --text-gray: #555555;
+}
+
+body {
+  background: var(--bg);
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif; 
+  color: var(--brand-black);
+}
+
+/*navbar*/
+.nav-container {
+  display: flex;
+  align-items: center;
+  padding: 24px 50px;
+  background: var(--bg);
+  position: relative;
+}
+
+.nav-logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-style: italic;
+  position: absolute;
+  left: 50px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--accent-purple);
+  font-size: 1.1rem;
+}
+
+.nav-link.active {
+  background-color: var(--brand-black);
+  color: var(--white);
+  padding: 8px 20px;
+  border-radius: 20px;
+}
+
+/*dashboard*/
+.home-container {
+  display: grid;
+  grid-template-columns: 1fr 320px; /*set width*/
+  gap: 50px;
+  margin: 0;
+  padding: 50px 50px;
+}
+
+/*left col: main*/
+.dashboard-main {
+  text-align: left !important;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /*cards stretch whole page*/
+  justify-content: flex-start;
+}
+
+.dashboard-header {
+  margin-bottom: 40px;
+  text-align: left !important;
+}
+
+.current-date {
+  color: var(--accent-purple);
+  font-size: 1.6rem;
+  margin: 0 0 5px 0;
+}
+
+.greeting-text {
+  font-size: 3.5rem;
+  font-style: italic;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+/*progress card*/
+.progress-card {
+  background: var(--bg);
+  border: 1px solid var(--border-color);
+  border-radius: 30px;
+  padding: 30px 40px;
+  margin-bottom: 40px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.progress-hours strong {
+  font-size: 1.3rem;
+}
+
+.progress-track {
+  width: 100%;
+  height: 12px;
+  background: var(--accent-light);
+  border-radius: 10px;
+  position: relative;
+}
+
+.progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--accent-purple);
+  border-radius: 10px;
+}
+
+.progress-percentage {
+  text-align: right;
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin-top: 10px;
+}
+
+/*timer*/
+.timer-card {
+  background: var(--brand-black);
+  border-radius: 40px;
+  padding: 70px 0;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timer-display {
+  color: var(--white);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 2px;
+}
+
+.start-session-btn {
+  position: absolute;
+  bottom: -30px; 
+  background: var(--accent-purple);
+  color: var(--brand-black);
+  border: none;
+  border-radius: 35px;
+  padding: 18px 45px;
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.start-session-btn:hover {
+  opacity: 0.9;
+}
+
+/*right col: sidebar*/
+.leaderboard-card {
+  background: var(--bg);
+  border: 1px solid var(--border-color);
+  border-radius: 30px;
+  padding: 30px;
+}
+
+.leaderboard-title {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.leaderboard-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.rank-badge {
+  width: 28px;
+  height: 28px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin-right: 15px;
+  font-size: 0.9rem;
+}
+
+.rank-top {
+  background: var(--accent-purple);
+  color: var(--brand-black);
+}
+
+.player-name {
+  font-style: italic;
+  flex-grow: 1;
+}
+
+.player-score {
+  font-weight: bold;
+}
