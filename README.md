@@ -4,6 +4,13 @@ Web application that tracks a users study time
 
 ## How to Run 
 
+Create a backend `.env` file with:
+
+```sh
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_long_random_secret
+```
+
 On the: npm install
 In one terminal start the backend: npm -w backend run dev
 In another terminal : npm -w frontend run dev

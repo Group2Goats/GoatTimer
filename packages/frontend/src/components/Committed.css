@@ -87,6 +87,13 @@
   color: #555;
 }
 
+.committed-error {
+  color: #a4001d;
+  font-size: 0.95rem;
+  margin: -24px 0 24px;
+  text-align: center;
+}
+
 /* ── Action buttons ── */
 .committed-actions {
   display: flex;
