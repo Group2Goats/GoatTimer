@@ -64,10 +64,6 @@ userSchema.methods.comparePassword = async function comparePassword(password) {
   return this.password === password;
 };
 
-userSchema.methods.hasPlaintextPassword = function hasPlaintextPassword() {
-  return !isPasswordHash(this.password);
-};
-
 userSchema.statics.hashPassword = function hashPassword(password) {
   return bcrypt.hash(password, SALT_ROUNDS);
 };
