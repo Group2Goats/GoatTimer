@@ -28,7 +28,6 @@ function Login() {
 
       const { user } = await res.json();
 
-      // If user hasn't picked a commitment level yet, send them there
       if (!user.commitmentLevel) {
         navigate("/committed");
       } else {

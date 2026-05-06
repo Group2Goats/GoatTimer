@@ -9,7 +9,6 @@ import User from "../models/user.js";
 
 const router = express.Router();
 
-// Create a new account and start an authenticated session
 router.post("/signup", async (req, res) => {
   try {
     const email =
@@ -34,7 +33,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// Authenticate an existing account and lazily hash old plaintext passwords
 router.post("/login", async (req, res) => {
   try {
     const email =
@@ -60,7 +58,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// End the authenticated session
 router.post("/logout", (req, res) => {
   res.clearCookie(AUTH_COOKIE_NAME, clearAuthCookieOptions);
   res.json({ message: "Logged out" });

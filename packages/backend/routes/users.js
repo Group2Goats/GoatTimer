@@ -5,7 +5,6 @@ import User from "../models/user.js";
 const router = express.Router();
 const COMMITMENT_LEVEL_TO_HOURS = { low: 70, medium: 105, hard: 140 };
 
-// Collect user data
 router.get("/", async (req, res) => {
   try {
     const users = await User.find();
@@ -15,7 +14,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Create a new user
 router.post("/", async (req, res) => {
   try {
     const user = await User.create(req.body);
@@ -25,7 +23,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get user by ID
 router.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -36,7 +33,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Update user by ID
 router.put("/:id", async (req, res) => {
   try {
     const updates = { ...req.body };
@@ -56,7 +52,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Update the authenticated user's commitment level
 router.patch("/me/commitment", requireAuth, async (req, res) => {
   try {
     const weeklyGoalHours = COMMITMENT_LEVEL_TO_HOURS[req.body.commitmentLevel];
@@ -80,7 +75,6 @@ router.patch("/me/commitment", requireAuth, async (req, res) => {
   }
 });
 
-// Update user commitment level
 router.patch("/:id/commitment", requireAuth, async (req, res) => {
   try {
     const weeklyGoalHours = COMMITMENT_LEVEL_TO_HOURS[req.body.commitmentLevel];
@@ -104,7 +98,6 @@ router.patch("/:id/commitment", requireAuth, async (req, res) => {
   }
 });
 
-// Delete user by ID
 router.delete("/:id", async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);

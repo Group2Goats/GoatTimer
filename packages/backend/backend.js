@@ -12,7 +12,6 @@ app.use(cookieParser());
 
 connectDB();
 
-// Test server
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });
@@ -20,7 +19,6 @@ app.get("/api/hello", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
