@@ -1,12 +1,12 @@
 import React from "react";
-import UserNavbar from "./UserNavbar.jsx"; 
-import "./UserHome.css";
+import Navbar from "./Navbar.jsx";
+import "./Dashboard.css";
 
-const UserHome = () => {
+const Dashboard = () => {
   return (
     <div className="user-layout">
       {}
-      <UserNavbar />
+      <Navbar />
 
       {}
       <div className="home-container">
@@ -72,4 +72,4 @@ const UserHome = () => {
   );
 };
 
-export default UserHome;
+export default Dashboard;

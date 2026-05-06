@@ -5,7 +5,7 @@ import "./index.css";
 import App from "./App.jsx";
 import Signup from "./components/Signup.jsx";
 import About from "./components/About.jsx";
-import UserHome from "./components/UserHome.jsx";
+import Dashboard from "./components/Dashboard.jsx";
 
 const root = document.getElementById("root");
 
@@ -15,7 +15,7 @@ ReactDOM.createRoot(root).render(
       <Route path="/" element={<App />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/about" element={<About />} />
-      <Route path="/userhome" element={<UserHome />} />
+      <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   </BrowserRouter>,
 );
