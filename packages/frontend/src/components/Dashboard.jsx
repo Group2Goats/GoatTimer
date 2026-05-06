@@ -1,12 +1,10 @@
 import React from "react";
-import Navbar from "./Navbar.jsx";
 import "./Dashboard.css";
 
 const Dashboard = () => {
   return (
     <div className="user-layout">
       {}
-      <Navbar />
 
       {}
       <div className="home-container">
