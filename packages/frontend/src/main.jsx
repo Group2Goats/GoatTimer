@@ -9,6 +9,7 @@ import Committed from "./components/Committed.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import About from "./components/About.jsx";
+import Profile from "./components/Profile.jsx";
 
 const root = document.getElementById("root");
 
@@ -23,6 +24,7 @@ ReactDOM.createRoot(root).render(
         <Route path="/committed" element={<Committed />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="about" element={<About />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
     ,
