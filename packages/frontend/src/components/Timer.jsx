@@ -1,149 +1,90 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Timer.module.css";
+import MouseLockCanvas from "./MouseLock.jsx";
 
-const RADIUS = 20;
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+
+  return `${mins.toString().padStart(2, "0")}:${secs
+    .toString()
+    .padStart(2, "0")}`;
+}
+
+function ClockDisplay({ time }) {
+  return <h1 className={styles.timerDisplay}>{formatTime(time)}</h1>;
+}
+
+function SessionButton({ isRunning, onClick }) {
+  return (
+    <button onClick={onClick} className={styles.sessionBtn}>
+      {isRunning ? "Stop Session" : "Start Session"}
+    </button>
+  );
+}
 
 function Timer() {
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
   const canvasRef = useRef(null);
-  const animationRef = useRef(null);
-  const [position, setPosition] = useState({ x: 250, y: 150 });
-  const positionRef = useRef(position);
 
-  // pointer lock from Mozilla docs demo
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    if (!isRunning) return;
 
-    function find2ndCenter(pos, max) {
-      if (pos < RADIUS) return pos + max;
-      if (pos + RADIUS > max) return pos - max;
-      return 0;
-    }
+    const intervalId = setInterval(() => {
+      setTime((prev) => prev + 1);
+    }, 1000);
 
-    function drawBall(x, y) {
-      ctx.beginPath();
-      ctx.arc(x, y, RADIUS, 0, 2 * Math.PI, true);
-      ctx.fill();
-    }
+    return () => clearInterval(intervalId);
+  }, [isRunning]);
 
-    function canvasDraw() {
-      const { x, y } = positionRef.current;
-
-      const x2 = find2ndCenter(x, canvas.width);
-      const y2 = find2ndCenter(y, canvas.height);
-
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "#f00";
-
-      drawBall(x, y);
-
-      if (x2) drawBall(x2, y);
-      if (y2) drawBall(x, y2);
-      if (x2 && y2) drawBall(x2, y2);
-    }
-
-    function updateCoord(pos, delta, max) {
-      pos += delta;
-      pos %= max;
-      if (pos < 0) pos += max;
-      return pos;
-    }
-
-    function updatePosition(e) {
-      const current = positionRef.current;
-
-      const next = {
-        x: updateCoord(current.x, e.movementX, canvas.width),
-        y: updateCoord(current.y, e.movementY, canvas.height),
-      };
-
-      positionRef.current = next;
-      setPosition(next);
-
-      if (!animationRef.current) {
-        animationRef.current = requestAnimationFrame(() => {
-          animationRef.current = null;
-          canvasDraw();
-        });
-      }
-    }
-
-    function lockChangeChange() {
-      if (document.pointerLockElement === canvas) {
-        document.addEventListener("mousemove", updatePosition);
-      } else {
-        document.removeEventListener("mousemove", updatePosition);
-      }
-    }
-
-    canvasDraw();
-
-    document.addEventListener("pointerlockchange", lockChangeChange);
-
-    return () => {
-      document.removeEventListener("pointerlockchange", lockChangeChange);
-      document.removeEventListener("mousemove", updatePosition);
-
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-
-      if (document.pointerLockElement === canvas) {
-        document.exitPointerLock();
-      }
-    };
+  const handleLockChange = useCallback((locked) => {
+    setIsRunning(locked);
   }, []);
 
-  /* function resizeCanvas(canvas) {
-    const { width, height } = canvas.getBoundingClientRect();
+  async function startSession() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    if (canvas.width !== width || canvas.height !== height) {
-      const { devicePixelRatio: ratio = 1 } = window;
-      const context = canvas.getContext("2d");
-      canvas.width = width * ratio;
-      canvas.height = height * ratio;
-      context.scale(ratio, ratio);
-      return true;
+    try {
+      await canvas.requestPointerLock({
+        unadjustedMovement: true,
+      });
+    } catch (error) {
+      if (error.name === "NotSupportedError") {
+        await canvas.requestPointerLock();
+      } else {
+        console.error(error);
+      }
+    }
+  }
+
+  function stopSession() {
+    if (document.pointerLockElement) {
+      document.exitPointerLock();
     }
 
-    return false;
-  } */
+    setIsRunning(false);
+  }
 
-  async function handleClick() {
-    const canvas = canvasRef.current;
-    /* const div = canvas.parentElement;
-    console.log(div.getBoundingClientRect().width);
-    canvas.width = div.clientWidth;
-    canvas.height = div.clientHeight; */
-
-    if (!document.pointerLockElement) {
-      try {
-        await canvas.requestPointerLock({
-          unadjustedMovement: true,
-        });
-      } catch (error) {
-        if (error.name === "NotSupportedError") {
-          await canvas.requestPointerLock();
-        } else {
-          throw error;
-        }
-      }
+  async function sessionToggle() {
+    if (isRunning) {
+      stopSession();
+    } else {
+      await startSession();
     }
   }
 
   return (
     <div className={styles.timerCard}>
-      <canvas
-        ref={canvasRef}
-        width={500}
-        height={300}
-        className={styles.timerDisplay}
-      />
-      <button onClick={handleClick} className={styles.startSessionBtn}>
-        Start Session
-      </button>
+      <ClockDisplay time={time} />
+
+      <MouseLockCanvas canvasRef={canvasRef} onLockChange={handleLockChange} />
+
+      <SessionButton isRunning={isRunning} onClick={sessionToggle} />
+      <span className={styles.sessionInfo}>
+        Laptop users: press ESC to stop timer
+      </span>
     </div>
   );
 }
