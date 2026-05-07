@@ -1,5 +1,6 @@
 import React from "react";
 import "./Dashboard.css";
+import Timer from "./Timer";
 
 const Dashboard = () => {
   return (
@@ -27,10 +28,7 @@ const Dashboard = () => {
             <div className="progress-percentage">75%</div>
           </section>
 
-          <section className="timer-card">
-            <div className="timer-display">00:00</div>
-            <button className="start-session-btn">Start session</button>
-          </section>
+          <Timer />
         </main>
 
         <aside className="dashboard-sidebar">
