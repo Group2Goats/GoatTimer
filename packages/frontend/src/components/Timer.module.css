@@ -21,11 +21,12 @@
   letter-spacing: 2px;
 }
 
-.startSessionBtn {
+.sessionBtn {
   position: absolute;
   bottom: -30px;
   background: var(--accent-purple);
   color: var(--brand-black);
+  /* border: none; */
   border: none;
   border-radius: 35px;
   padding: 18px 45px;
@@ -33,9 +34,22 @@
   font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
 }
 
-.startSessionBtn:hover {
-  opacity: 0.9;
+.sessionBtn:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.sessionInfo {
+  position: absolute;
+  bottom: -90px;
+  background: var(--accent-purple);
+  color: var(--brand-black);
+  border: none;
+  border-radius: 35px;
+  padding: 10px;
+  font-family: Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
