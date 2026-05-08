@@ -60,7 +60,9 @@
   border: 2px solid rgba(0, 8, 7, 0.08);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
   pointer-events: auto;
-  transition: width 0.2s ease, height 0.2s ease;
+  transition:
+    width 0.2s ease,
+    height 0.2s ease;
 }
 
 .NavContent {

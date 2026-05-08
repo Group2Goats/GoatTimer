@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -10,7 +11,12 @@ const Dashboard = () => {
       <div className="home-container">
         <main className="dashboard-main">
           <header className="dashboard-header">
-            <p className="current-date">Tuesday Apr 28</p>
+            <div className="dashboard-header-top">
+              <p className="current-date">Tuesday Apr 28</p>
+              <Link to="/profile" className="profile-btn">
+                Profile
+              </Link>
+            </div>
             <h1 className="greeting-text">Good morning, Tan</h1>
           </header>
 

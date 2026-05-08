@@ -1,0 +1,146 @@
+.profilePage {
+  min-height: calc(100vh - 86px);
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 20px 48px;
+}
+
+.profileContainer {
+  width: min(1100px, 92vw);
+}
+
+.profileCard {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(0, 8, 7, 0.28);
+  border-radius: 16px;
+  padding: 34px 34px 30px;
+}
+
+.profileRow {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.profileLabel {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.15rem, 1.6vw, 1.6rem);
+  font-weight: 700;
+  color: var(--brand-black);
+  text-align: right;
+}
+
+.profileValue {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(0, 8, 7, 0.16);
+  background: rgba(255, 255, 255, 0.42);
+  color: #858585;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1rem, 1.2vw, 1.35rem);
+}
+
+.profileButtons {
+  margin-top: 34px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+}
+
+.profileButton {
+  border: none;
+  border-radius: 999px;
+  color: var(--white);
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.profileButton:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.profileLogout {
+  min-width: 150px;
+  min-height: 68px;
+  padding: 0 28px;
+  background: #ef5a58;
+  font-size: 2rem;
+}
+
+.profileDelete {
+  min-width: 130px;
+  min-height: 68px;
+  padding: 10px 18px;
+  background: #a70b0b;
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+@media (max-width: 900px) {
+  .profileCard {
+    padding: 26px 22px 24px;
+  }
+
+  .profileRow {
+    grid-template-columns: 110px 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .profilePage {
+    min-height: auto;
+    align-items: flex-start;
+    padding: 20px 12px 32px;
+  }
+
+  .profileContainer {
+    width: 100%;
+  }
+
+  .profileRow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .profileLabel {
+    text-align: left;
+    font-size: 1.1rem;
+  }
+
+  .profileValue {
+    min-height: 48px;
+    font-size: 1rem;
+    padding: 0 16px;
+  }
+
+  .profileButtons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profileLogout,
+  .profileDelete {
+    width: 100%;
+    min-width: 0;
+    min-height: 58px;
+    font-size: 1.2rem;
+  }
+
+  .profileDelete {
+    line-height: 1.2;
+  }
+}
