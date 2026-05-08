@@ -82,7 +82,7 @@ function Timer() {
     }
 
     wasRunningRef.current = isRunning;
-  }, [isRunning, time]);
+  }, [isRunning, time, navigate]);
 
   const handleLockChange = useCallback((locked) => {
     setIsRunning(locked);
