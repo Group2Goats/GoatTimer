@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Timer.module.css";
-import MouseLockCanvas from "./MouseLock.jsx";
+import MouseLock from "./MouseLock.jsx";
+import { useNavigate } from "react-router";
+
+const MAX_TIME = 1500; // 25 minutes in seconds
 
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
@@ -24,19 +27,62 @@ function SessionButton({ isRunning, onClick }) {
 }
 
 function Timer() {
-  const [time, setTime] = useState(0);
+  const navigate = useNavigate();
+  const [time, setTime] = useState(MAX_TIME);
   const [isRunning, setIsRunning] = useState(false);
   const canvasRef = useRef(null);
+  const sentTimeRef = useRef(0);
+
+  const wasRunningRef = useRef(false);
 
   useEffect(() => {
     if (!isRunning) return;
 
     const intervalId = setInterval(() => {
-      setTime((prev) => prev + 1);
+      setTime((prev) => prev - 1);
+
+      if (time <= 0) {
+        setIsRunning(false);
+        setTime(0);
+      }
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [isRunning]);
+  }, [isRunning, time]);
+
+  useEffect(() => {
+    async function sendTotalTime() {
+      const lapsedTime = MAX_TIME - time - sentTimeRef.current;
+      sentTimeRef.current += lapsedTime;
+
+      if (lapsedTime === 0) return;
+
+      /* try {
+        await fetch(`/api/users/${userId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            totalTime,
+          }),
+        });
+      } catch (error) {
+        console.error("Failed to send total time:", error);
+      } */
+      console.log("Lapsed time:", lapsedTime);
+      if (time === 0) {
+        // create component with break timer and navigate to it
+        navigate(0);
+      }
+    }
+
+    if (wasRunningRef.current && !isRunning) {
+      sendTotalTime();
+    }
+
+    wasRunningRef.current = isRunning;
+  }, [isRunning, time]);
 
   const handleLockChange = useCallback((locked) => {
     setIsRunning(locked);
@@ -67,7 +113,7 @@ function Timer() {
     setIsRunning(false);
   }
 
-  async function sessionToggle() {
+  async function handleSessionToggle() {
     if (isRunning) {
       stopSession();
     } else {
@@ -79,12 +125,13 @@ function Timer() {
     <div className={styles.timerCard}>
       <ClockDisplay time={time} />
 
-      <MouseLockCanvas canvasRef={canvasRef} onLockChange={handleLockChange} />
+      <MouseLock canvasRef={canvasRef} onLockChange={handleLockChange} />
 
-      <SessionButton isRunning={isRunning} onClick={sessionToggle} />
-      <span className={styles.sessionInfo}>
-        Laptop users: press ESC to stop timer
-      </span>
+      <SessionButton isRunning={isRunning} onClick={handleSessionToggle} />
+
+      <p className={styles.sessionInfo}>
+        Press stop button or ESC to stop timer
+      </p>
     </div>
   );
 }

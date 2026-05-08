@@ -5,7 +5,7 @@ const RADIUS = 20;
 const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 300;
 
-function MouseLockCanvas({ canvasRef, onLockChange }) {
+function MouseLock({ canvasRef, onLockChange }) {
   const animationRef = useRef(null);
   const positionRef = useRef({ x: 250, y: 150 });
 
@@ -116,4 +116,4 @@ function MouseLockCanvas({ canvasRef, onLockChange }) {
   );
 }
 
-export default MouseLockCanvas;
+export default MouseLock;
