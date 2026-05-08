@@ -1,14 +1,35 @@
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import styles from "./Navbar.module.css";
-import { useState } from "react";
 
 function Navbar() {
-  // if user exits, route to dashboard
-  // else route to signup
-  const [route] = useState(() => {
-    return localStorage.getItem("userId") ? "dashboard" : "signup";
-  });
+  const [route, setRoute] = useState("/signup");
+  const location = useLocation();
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    async function checkSession() {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+
+        if (isCurrent) {
+          setRoute(res.ok ? "/dashboard" : "/signup");
+        }
+      } catch {
+        if (isCurrent) {
+          setRoute("/signup");
+        }
+      }
+    }
+
+    checkSession();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [location.pathname]);
 
   return (
     <NavigationMenu.Root className={styles.NavRoot}>
@@ -54,7 +75,7 @@ function Navbar() {
 
         <NavigationMenu.Item>
           <NavigationMenu.Trigger className={styles.NavTrigger}>
-            <NavigationMenu.Link className={styles.NavLink} href="about">
+            <NavigationMenu.Link className={styles.NavLink} href="/about">
               About
             </NavigationMenu.Link>
           </NavigationMenu.Trigger>

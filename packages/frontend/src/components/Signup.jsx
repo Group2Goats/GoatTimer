@@ -37,8 +37,12 @@ function Signup() {
       }
 
       const { user } = await res.json();
-      localStorage.setItem("userId", user._id);
-      navigate("/committed");
+
+      if (user.commitmentLevel) {
+        navigate("/dashboard", { replace: true });
+      } else {
+        navigate("/committed", { replace: true });
+      }
     } catch {
       setError("Could not connect to server");
     }

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import "./Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const location = useLocation();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -27,14 +28,15 @@ function Login() {
       }
 
       const { user } = await res.json();
+      const redirectPath =
+        typeof location.state?.from?.pathname === "string"
+          ? location.state.from.pathname
+          : "";
 
-      localStorage.setItem("userId", user._id);
-
-      // If user hasn't picked a commitment level yet, send them there
       if (!user.commitmentLevel) {
-        navigate("/committed");
+        navigate("/committed", { replace: true });
       } else {
-        navigate("/dashboard");
+        navigate(redirectPath || "/dashboard", { replace: true });
       }
     } catch {
       setError("Could not connect to server");

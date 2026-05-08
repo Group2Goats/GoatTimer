@@ -50,8 +50,7 @@ function Committed() {
         return;
       }
 
-      localStorage.setItem("commitmentLevel", selected);
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch {
       setError("Could not connect to server");
     }

@@ -9,6 +9,30 @@ import requireAuth from "../middleware/requireAuth.js";
 import User from "../models/user.js";
 
 const router = express.Router();
+const DUPLICATE_KEY_ERROR_CODE = 11000;
+const DUPLICATE_EMAIL_MESSAGE = "Email is already registered";
+
+function isDuplicateEmailError(error) {
+  const message = typeof error?.message === "string" ? error.message : "";
+  const duplicateError =
+    error?.code === DUPLICATE_KEY_ERROR_CODE ? error : error?.cause;
+
+  if (message.includes("E11000") && message.includes("email_1")) {
+    return true;
+  }
+
+  if (!duplicateError || duplicateError.code !== DUPLICATE_KEY_ERROR_CODE) {
+    return false;
+  }
+
+  const hasEmailKey =
+    !duplicateError.keyPattern ||
+    duplicateError.keyPattern.email ||
+    duplicateError.keyValue?.email ||
+    duplicateError.message?.includes("email_1");
+
+  return Boolean(hasEmailKey);
+}
 
 router.post("/signup", async (req, res) => {
   try {
@@ -16,9 +40,20 @@ router.post("/signup", async (req, res) => {
       typeof req.body.email === "string"
         ? req.body.email.trim().toLowerCase()
         : "";
+    const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const existingUser = await User.exists({ email });
+
+    if (existingUser) {
+      return res.status(409).json({ error: DUPLICATE_EMAIL_MESSAGE });
+    }
 
     const user = await User.create({
-      name: req.body.name || email.split("@")[0] || "GoatTimer User",
+      name: name || email.split("@")[0] || "GoatTimer User",
       email,
       password: req.body.password,
     });
@@ -26,8 +61,8 @@ router.post("/signup", async (req, res) => {
     res.cookie(AUTH_COOKIE_NAME, createAuthToken(user), authCookieOptions);
     res.status(201).json({ user });
   } catch (error) {
-    if (error.code === 11000) {
-      return res.status(409).json({ error: "Email is already registered" });
+    if (isDuplicateEmailError(error)) {
+      return res.status(409).json({ error: DUPLICATE_EMAIL_MESSAGE });
     }
 
     res.status(400).json({ error: error.message });
