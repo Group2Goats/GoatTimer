@@ -52,7 +52,7 @@ function Profile() {
       .then((res) => {
         if (!res.ok) throw new Error("Failed to delete account");
         localStorage.removeItem("userId");
-        navigate("/login");
+        navigate("/");
       })
       .catch((err) => {
         alert("Error deleting account: " + err.message);

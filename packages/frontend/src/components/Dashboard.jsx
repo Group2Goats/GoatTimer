@@ -13,7 +13,9 @@ const Dashboard = () => {
           <header className="dashboard-header">
             <div className="dashboard-header-top">
               <p className="current-date">Tuesday Apr 28</p>
-              <Link to="/profile" className="profile-btn">Profile</Link>
+              <Link to="/profile" className="profile-btn">
+                Profile
+              </Link>
             </div>
             <h1 className="greeting-text">Good morning, Tan</h1>
           </header>
