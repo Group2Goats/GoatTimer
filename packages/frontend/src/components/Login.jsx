@@ -15,8 +15,8 @@ function Login() {
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
@@ -28,6 +28,9 @@ function Login() {
 
       const { user } = await res.json();
 
+      localStorage.setItem("userId", user._id);
+
+      // If user hasn't picked a commitment level yet, send them there
       if (!user.commitmentLevel) {
         navigate("/committed");
       } else {

@@ -11,16 +11,14 @@ function requireAuth(req, res, next) {
 
   try {
     const payload = jwt.verify(token, JWT_SECRET);
-    const email =
-      typeof payload === "object" && payload
-        ? payload.userId || payload.sub
-        : "";
+    const email = typeof payload === "object" && payload ? payload.email : "";
+    const userId = typeof payload === "object" && payload ? payload.sub : "";
 
     if (typeof email !== "string" || !email.trim()) {
       return res.status(401).json({ error: "Invalid or expired session" });
     }
 
-    req.auth = { email: email.trim().toLowerCase() };
+    req.auth = { email: email.trim().toLowerCase(), userId };
     next();
   } catch {
     res.status(401).json({ error: "Invalid or expired session" });

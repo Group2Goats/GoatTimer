@@ -21,8 +21,8 @@ function Signup() {
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: email.split("@")[0],
           email,
@@ -36,7 +36,8 @@ function Signup() {
         return;
       }
 
-      await res.json();
+      const { user } = await res.json();
+      localStorage.setItem("userId", user._id);
       navigate("/committed");
     } catch {
       setError("Could not connect to server");
