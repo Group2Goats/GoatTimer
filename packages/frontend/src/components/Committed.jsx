@@ -28,14 +28,14 @@ function Committed() {
   const navigate = useNavigate();
 
   const handleLetsGo = async () => {
-    // In a full app this would PATCH the logged-in user's commitment.
-    // For now we store the choice in localStorage and navigate forward.
+    // Keep localStorage in sync so the dashboard can render immediately.
     const userId = localStorage.getItem("userId");
 
     if (userId) {
       try {
         await fetch(`/api/users/${userId}/commitment`, {
           method: "PATCH",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ commitmentLevel: selected }),
         });

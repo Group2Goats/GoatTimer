@@ -13,21 +13,20 @@ function Login() {
     setError("");
 
     try {
-      const res = await fetch("/api/users");
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
       if (!res.ok) {
-        setError("Could not connect to server");
+        const data = await res.json();
+        setError(data.error || "Invalid email or password");
         return;
       }
 
-      const users = await res.json();
-      const user = users.find(
-        (u) => u.email === email && u.password === password,
-      );
-
-      if (!user) {
-        setError("Invalid email or password");
-        return;
-      }
+      const { user } = await res.json();
 
       localStorage.setItem("userId", user._id);
 

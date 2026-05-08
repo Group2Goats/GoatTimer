@@ -2,11 +2,18 @@
 
 Web application that tracks a users study time
 
-## How to Run 
+## How to Run
 
 On the: npm install
+Set `MONGO_URI` in `packages/backend/.env` to your MongoDB Atlas connection string
 In one terminal start the backend: npm -w backend run dev
-In another terminal : npm -w frontend run dev
+In another terminal: npm -w frontend run dev
+
+The backend defaults to port 5050, and the frontend dev server proxies `/api`
+requests there.
+
+For JWT auth, set `JWT_SECRET` in `packages/backend/.env`.
+Successful login/signup sets an HttpOnly cookie named `goattimer_jwt`.
 
 # Contributing
  - Formatting is default javascript and Prettier styles

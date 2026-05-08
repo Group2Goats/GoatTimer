@@ -19,8 +19,9 @@ function Signup() {
     }
 
     try {
-      const res = await fetch("/api/users", {
+      const res = await fetch("/api/auth/signup", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: email.split("@")[0],
@@ -35,7 +36,7 @@ function Signup() {
         return;
       }
 
-      const user = await res.json();
+      const { user } = await res.json();
       localStorage.setItem("userId", user._id);
       navigate("/committed");
     } catch {
