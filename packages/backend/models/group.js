@@ -2,14 +2,14 @@ import mongoose from "mongoose";
 
 const groupSchema = new mongoose.Schema(
   {
-    // The user who owns the group
+    // User who created the group
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "owner is required"],
     },
 
-    // The users inside the group
+    // Users in the group
     users: {
       type: [
         {
@@ -20,14 +20,14 @@ const groupSchema = new mongoose.Schema(
       default: [],
     },
 
-    // The group goal
-    goal: {
+    // Group goal from the written requirement
+    groupGoal: {
       type: Number,
       default: 0,
-      min: [0, "goal cannot be negative"],
+      min: [0, "groupGoal cannot be negative"],
     },
 
-    // The group hours
+    // Hours from the diagram
     hours: {
       type: Number,
       default: 0,

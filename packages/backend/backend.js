@@ -11,17 +11,16 @@ app.use(express.json());
 
 // User fields that can be updated
 const allowedUserUpdateFields = [
+  "username",
   "email",
+  "name",
   "firstName",
-  "isAdmin",
-  "totalHours",
   "goal",
-  "weeklyHours",
-  "age",
+  "schedule",
 ];
 
 // Group fields that can be updated
-const allowedGroupUpdateFields = ["owner", "users", "goal", "hours"];
+const allowedGroupUpdateFields = ["groupGoal", "hours"];
 
 // Gets only the fields that are allowed to update
 function getAllowedUpdates(body, allowedFields) {
@@ -30,7 +29,7 @@ function getAllowedUpdates(body, allowedFields) {
   );
 }
 
-// Checks if a duplicate unique field was used
+// Checks if username or email already exists
 function isDuplicateKeyError(error) {
   return error?.code === 11000;
 }
@@ -54,6 +53,32 @@ function sendError(res, error, defaultStatus = 500) {
   return res.status(defaultStatus).json({ error: error.message });
 }
 
+// Finds a user by id, username, or email
+function getUserFilter(userParam) {
+  const value = userParam.toLowerCase();
+
+  if (mongoose.Types.ObjectId.isValid(value)) {
+    return { _id: value };
+  }
+
+  return {
+    $or: [{ username: value }, { email: value }],
+  };
+}
+
+// Makes sure users is always an array
+function getUsersArray(users) {
+  if (Array.isArray(users)) {
+    return users;
+  }
+
+  if (!users) {
+    return [];
+  }
+
+  return [users];
+}
+
 // Connect to MongoDB
 async function connectDB() {
   try {
@@ -71,21 +96,22 @@ async function connectDB() {
 
 connectDB();
 
+// Test server
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });
 
-// Get all users
+// Get all Users
 app.get("/api/users", async (req, res) => {
   try {
-    const users = await User.find().sort({ createdAt: -1 });
+    const users = await User.find().populate("groups").sort({ createdAt: -1 });
     res.json(users);
   } catch (error) {
     sendError(res, error);
   }
 });
 
-// Create a user
+// Post a User
 app.post("/api/users", async (req, res) => {
   try {
     const user = await User.create(req.body);
@@ -96,16 +122,16 @@ app.post("/api/users", async (req, res) => {
 });
 
 // Get all groups for one user
-app.get("/api/users/:userId/groups", async (req, res) => {
+app.get("/api/users/:userParam/groups", async (req, res) => {
   try {
-    const { userId } = req.params;
+    const user = await User.findOne(getUserFilter(req.params.userParam));
 
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ error: "Invalid user id" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
     const groups = await Group.find({
-      $or: [{ owner: userId }, { users: userId }],
+      $or: [{ owner: user._id }, { users: user._id }],
     })
       .populate("owner")
       .populate("users")
@@ -117,16 +143,12 @@ app.get("/api/users/:userId/groups", async (req, res) => {
   }
 });
 
-// Get one user by route param. The param may be a MongoDB id or email.
+// Get 1 User by params
 app.get("/api/users/:userParam", async (req, res) => {
   try {
-    const userParam = req.params.userParam.toLowerCase();
-
-    const filter = mongoose.Types.ObjectId.isValid(userParam)
-      ? { _id: userParam }
-      : { email: userParam };
-
-    const user = await User.findOne(filter);
+    const user = await User.findOne(
+      getUserFilter(req.params.userParam),
+    ).populate("groups");
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -138,7 +160,7 @@ app.get("/api/users/:userParam", async (req, res) => {
   }
 });
 
-// Update user information
+// Update username, email, name, goal, and schedule
 app.put("/api/users/:userParam", async (req, res) => {
   try {
     const updates = getAllowedUpdates(req.body, allowedUserUpdateFields);
@@ -149,16 +171,14 @@ app.put("/api/users/:userParam", async (req, res) => {
       });
     }
 
-    const userParam = req.params.userParam.toLowerCase();
-
-    const filter = mongoose.Types.ObjectId.isValid(userParam)
-      ? { _id: userParam }
-      : { email: userParam };
-
-    const user = await User.findOneAndUpdate(filter, updates, {
-      new: true,
-      runValidators: true,
-    });
+    const user = await User.findOneAndUpdate(
+      getUserFilter(req.params.userParam),
+      updates,
+      {
+        returnDocument: "after",
+        runValidators: true,
+      },
+    ).populate("groups");
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -170,7 +190,7 @@ app.put("/api/users/:userParam", async (req, res) => {
   }
 });
 
-// Get all groups
+// Get all Groups
 app.get("/api/groups", async (req, res) => {
   try {
     const groups = await Group.find()
@@ -184,26 +204,58 @@ app.get("/api/groups", async (req, res) => {
   }
 });
 
-// Create a group
+// Post a group, person who created it should be the owner
 app.post("/api/groups", async (req, res) => {
   try {
-    const group = await Group.create(req.body);
-    res.status(201).json(group);
+    const { owner, groupGoal = 0, hours = 0 } = req.body;
+    const users = getUsersArray(req.body.users);
+
+    if (!owner || !mongoose.Types.ObjectId.isValid(owner)) {
+      return res.status(400).json({ error: "Valid owner id is required" });
+    }
+
+    const ownerUser = await User.findById(owner);
+
+    if (!ownerUser) {
+      return res.status(404).json({ error: "Owner user not found" });
+    }
+
+    // Owner is automatically added to the group users list
+    const groupUsers = [...new Set([owner, ...users].map(String))];
+
+    const group = await Group.create({
+      owner,
+      users: groupUsers,
+      groupGoal,
+      hours,
+    });
+
+    // Add this group to every user's groups array
+    await User.updateMany(
+      { _id: { $in: groupUsers } },
+      { $addToSet: { groups: group._id } },
+    );
+
+    const populatedGroup = await Group.findById(group._id)
+      .populate("owner")
+      .populate("users");
+
+    return res.status(201).json(populatedGroup);
   } catch (error) {
-    sendError(res, error, 400);
+    return sendError(res, error, 400);
   }
 });
 
-// Get one group by id
-app.get("/api/groups/:groupId", async (req, res) => {
+// Get 1 group by params
+app.get("/api/groups/:groupParam", async (req, res) => {
   try {
-    const { groupId } = req.params;
+    const { groupParam } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    if (!mongoose.Types.ObjectId.isValid(groupParam)) {
       return res.status(400).json({ error: "Invalid group id" });
     }
 
-    const group = await Group.findById(groupId)
+    const group = await Group.findById(groupParam)
       .populate("owner")
       .populate("users");
 
@@ -217,40 +269,77 @@ app.get("/api/groups/:groupId", async (req, res) => {
   }
 });
 
-// Update group information
-app.put("/api/groups/:groupId", async (req, res) => {
+// Update groupGoal and add/remove users
+app.put("/api/groups/:groupParam", async (req, res) => {
   try {
-    const { groupId } = req.params;
+    const { groupParam } = req.params;
+    const addUsers = getUsersArray(req.body.addUsers);
+    const removeUsers = getUsersArray(req.body.removeUsers);
 
-    if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    if (!mongoose.Types.ObjectId.isValid(groupParam)) {
       return res.status(400).json({ error: "Invalid group id" });
     }
 
-    const updates = getAllowedUpdates(req.body, allowedGroupUpdateFields);
-
-    if (Object.keys(updates).length === 0) {
-      return res.status(400).json({
-        error: `At least one valid field is required: ${allowedGroupUpdateFields.join(", ")}`,
-      });
-    }
-
-    const group = await Group.findByIdAndUpdate(groupId, updates, {
-      new: true,
-      runValidators: true,
-    })
-      .populate("owner")
-      .populate("users");
+    const group = await Group.findById(groupParam);
 
     if (!group) {
       return res.status(404).json({ error: "Group not found" });
     }
 
-    return res.json(group);
+    const updates = getAllowedUpdates(req.body, allowedGroupUpdateFields);
+
+    Object.assign(group, updates);
+
+    const invalidAddUsers = addUsers.filter(
+      (userId) => !mongoose.Types.ObjectId.isValid(userId),
+    );
+
+    const invalidRemoveUsers = removeUsers.filter(
+      (userId) => !mongoose.Types.ObjectId.isValid(userId),
+    );
+
+    if (invalidAddUsers.length > 0 || invalidRemoveUsers.length > 0) {
+      return res.status(400).json({ error: "Invalid user id in request" });
+    }
+
+    const currentUsers = group.users.map((userId) => userId.toString());
+    const usersToAdd = addUsers.map(String);
+    const usersToRemove = removeUsers.map(String);
+    const ownerId = group.owner.toString();
+
+    // Add users
+    const updatedUsers = [...new Set([...currentUsers, ...usersToAdd])];
+
+    // Remove users, but do not remove the owner
+    group.users = updatedUsers.filter((userId) => {
+      return userId === ownerId || !usersToRemove.includes(userId);
+    });
+
+    await group.save();
+
+    // Add group id to users who were added
+    await User.updateMany(
+      { _id: { $in: usersToAdd } },
+      { $addToSet: { groups: group._id } },
+    );
+
+    // Remove group id from users who were removed
+    await User.updateMany(
+      { _id: { $in: usersToRemove.filter((userId) => userId !== ownerId) } },
+      { $pull: { groups: group._id } },
+    );
+
+    const populatedGroup = await Group.findById(group._id)
+      .populate("owner")
+      .populate("users");
+
+    return res.json(populatedGroup);
   } catch (error) {
     return sendError(res, error, 400);
   }
 });
 
+// Start the server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
