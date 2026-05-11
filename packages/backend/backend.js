@@ -11,7 +11,6 @@ app.use(express.json());
 
 // User fields that can be updated
 const allowedUserUpdateFields = [
-  "username",
   "email",
   "name",
   "firstName",
