@@ -9,24 +9,43 @@ import Committed from "./components/Committed.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import About from "./components/About.jsx";
+import RequireAuth from "./components/RequireAuth.jsx";
 import Profile from "./components/Profile.jsx";
 
 const root = document.getElementById("root");
 
 ReactDOM.createRoot(root).render(
-  <>
+  <BrowserRouter>
     <Navbar />
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/committed" element={<Committed />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="about" element={<About />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-    </BrowserRouter>
-    ,
-  </>,
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/committed"
+        element={
+          <RequireAuth>
+            <Committed />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <RequireAuth>
+            <Dashboard />
+          </RequireAuth>
+        }
+      />
+      <Route path="/about" element={<About />} />
+      <Route
+        path="/profile"
+        element={
+          <RequireAuth>
+            <Profile />
+          </RequireAuth>
+        }
+      />
+    </Routes>
+  </BrowserRouter>,
 );

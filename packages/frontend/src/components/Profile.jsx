@@ -19,7 +19,7 @@ function Profile() {
     const userId = localStorage.getItem("userId");
     if (!userId) return;
 
-    fetch(`/api/users/${userId}`)
+    fetch(`/api/users/${userId}`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch user");
         return res.json();
@@ -48,6 +48,7 @@ function Profile() {
 
     fetch(`/api/users/${userId}`, {
       method: "DELETE",
+      credentials: "include",
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to delete account");

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import "./Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const location = useLocation();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -13,29 +14,30 @@ function Login() {
     setError("");
 
     try {
-      const res = await fetch("/api/users");
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
       if (!res.ok) {
-        setError("Could not connect to server");
+        const data = await res.json();
+        setError(data.error || "Invalid email or password");
         return;
       }
 
-      const users = await res.json();
-      const user = users.find(
-        (u) => u.email === email && u.password === password,
-      );
-
-      if (!user) {
-        setError("Invalid email or password");
-        return;
-      }
-
+      const { user } = await res.json();
       localStorage.setItem("userId", user._id);
+      const redirectPath =
+        typeof location.state?.from?.pathname === "string"
+          ? location.state.from.pathname
+          : "";
 
-      // If user hasn't picked a commitment level yet, send them there
       if (!user.commitmentLevel) {
-        navigate("/committed");
+        navigate("/committed", { replace: true });
       } else {
-        navigate("/dashboard");
+        navigate(redirectPath || "/dashboard", { replace: true });
       }
     } catch {
       setError("Could not connect to server");

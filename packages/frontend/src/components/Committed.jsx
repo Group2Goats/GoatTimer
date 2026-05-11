@@ -25,27 +25,35 @@ const TIERS = [
 
 function Committed() {
   const [selected, setSelected] = useState("medium");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLetsGo = async () => {
-    // In a full app this would PATCH the logged-in user's commitment.
-    // For now we store the choice in localStorage and navigate forward.
-    const userId = localStorage.getItem("userId");
+    setError("");
 
-    if (userId) {
-      try {
-        await fetch(`/api/users/${userId}/commitment`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ commitmentLevel: selected }),
-        });
-      } catch {
-        // Silently continue — the user can update later
+    try {
+      const res = await fetch("/api/users/me/commitment", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ commitmentLevel: selected }),
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          navigate("/login");
+          return;
+        }
+
+        const data = await res.json();
+        setError(data.error || "Could not save commitment level");
+        return;
       }
-    }
 
-    localStorage.setItem("commitmentLevel", selected);
-    navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
+    } catch {
+      setError("Could not connect to server");
+    }
   };
 
   const handleBack = () => {
@@ -75,6 +83,8 @@ function Committed() {
           </button>
         ))}
       </div>
+
+      {error && <p className="committed-error">{error}</p>}
 
       <div className="committed-actions">
         <button className="btn-back" onClick={handleBack}>
