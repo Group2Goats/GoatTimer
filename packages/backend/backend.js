@@ -1,8 +1,10 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+
 import connectDB from "./config/database.js";
 import { PORT, IS_PRODUCTION } from "./config/env.js";
+
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 
@@ -22,9 +24,11 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
+// Test server
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });

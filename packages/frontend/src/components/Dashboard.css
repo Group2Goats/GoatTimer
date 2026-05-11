@@ -2,8 +2,8 @@
   --brand-black: #000000;
   --white: #ffffff;
   --bg: #faf9ff;
-  --accent-purple: #9b9ece; 
-  --accent-light: #d1d2e8; 
+  --accent-purple: #9b9ece;
+  --accent-light: #d1d2e8;
   --border-color: #d8d8d8;
   --text-gray: #555555;
 }
@@ -11,7 +11,7 @@
 body {
   background: var(--bg);
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif; 
+  font-family: Georgia, "Times New Roman", serif;
   color: var(--brand-black);
 }
 
@@ -74,6 +74,27 @@ body {
 .dashboard-header {
   margin-bottom: 40px;
   text-align: left !important;
+}
+
+.dashboard-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-btn {
+  text-decoration: none;
+  background: var(--brand-black);
+  color: var(--white);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  padding: 8px 22px;
+  border-radius: 20px;
+  transition: opacity 0.18s ease;
+}
+
+.profile-btn:hover {
+  opacity: 0.8;
 }
 
 .current-date {
@@ -149,7 +170,10 @@ body {
 
 .timer-display {
   color: var(--white);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 6rem;
   font-weight: 800;
   line-height: 1;
@@ -158,7 +182,7 @@ body {
 
 .start-session-btn {
   position: absolute;
-  bottom: -30px; 
+  bottom: -30px;
   background: var(--accent-purple);
   color: var(--brand-black);
   border: none;
@@ -168,7 +192,7 @@ body {
   font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .start-session-btn:hover {

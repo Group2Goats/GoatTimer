@@ -1,5 +1,7 @@
 import React from "react";
+import { Link } from "react-router";
 import "./Dashboard.css";
+import Timer from "./Timer";
 
 const Dashboard = () => {
   return (
@@ -10,7 +12,12 @@ const Dashboard = () => {
       <div className="home-container">
         <main className="dashboard-main">
           <header className="dashboard-header">
-            <p className="current-date">Tuesday Apr 28</p>
+            <div className="dashboard-header-top">
+              <p className="current-date">Tuesday Apr 28</p>
+              <Link to="/profile" className="profile-btn">
+                Profile
+              </Link>
+            </div>
             <h1 className="greeting-text">Good morning, Tan</h1>
           </header>
 
@@ -27,10 +34,7 @@ const Dashboard = () => {
             <div className="progress-percentage">75%</div>
           </section>
 
-          <section className="timer-card">
-            <div className="timer-display">00:00</div>
-            <button className="start-session-btn">Start session</button>
-          </section>
+          <Timer />
         </main>
 
         <aside className="dashboard-sidebar">

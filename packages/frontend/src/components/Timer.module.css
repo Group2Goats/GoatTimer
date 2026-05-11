@@ -1,0 +1,54 @@
+.timerCard {
+  background: var(--brand-black);
+  border-radius: 40px;
+  padding: 70px 0;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timerDisplay {
+  color: var(--white);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 2px;
+}
+
+.sessionBtn {
+  position: absolute;
+  bottom: -30px;
+  background: var(--accent-purple);
+  color: var(--brand-black);
+  border: none;
+  border-radius: 35px;
+  padding: 18px 45px;
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
+}
+
+.sessionBtn:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.sessionInfo {
+  position: absolute;
+  bottom: -90px;
+  background: var(--accent-purple);
+  color: var(--brand-black);
+  border: none;
+  border-radius: 35px;
+  padding: 10px;
+  font-family: Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+}

@@ -8,25 +8,134 @@ function isPasswordHash(password) {
   return typeof password === "string" && BCRYPT_HASH_PATTERN.test(password);
 }
 
+const dayNames = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+];
+
+const scheduleSchema = new mongoose.Schema(
+  {
+    days: {
+      type: [
+        {
+          type: String,
+          enum: dayNames,
+          lowercase: true,
+          trim: true,
+        },
+      ],
+      default: [],
+    },
+
+    startTime: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    endTime: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    timezone: {
+      type: String,
+      default: "UTC",
+      trim: true,
+    },
+  },
+  { _id: false },
+);
+
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
+    // Groups that the user belongs to
+    groups: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Group",
+        },
+      ],
+      default: [],
+    },
+
     email: {
       type: String,
-      required: true,
+      required: [true, "email is required"],
       unique: true,
       lowercase: true,
       trim: true,
     },
-    password: { type: String, required: true, select: false },
+
+    name: {
+      type: String,
+      required: [true, "name is required"],
+      trim: true,
+    },
+
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+
     commitmentLevel: {
       type: String,
       enum: ["low", "medium", "hard"],
       default: null,
     },
-    weeklyGoalHours: {
+
+    // From the diagram
+    firstName: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+
+    goal: {
       type: Number,
-      default: null,
+      default: 0,
+      min: [0, "goal cannot be negative"],
+    },
+
+    schedule: {
+      type: scheduleSchema,
+      default: () => ({}),
+    },
+
+    totalHours: {
+      type: Number,
+      default: 0,
+      min: [0, "totalHours cannot be negative"],
+    },
+
+    weeklyHours: {
+      type: Number,
+      default: 0,
+      min: [0, "weeklyHours cannot be negative"],
+    },
+
+    todayHours: {
+      type: Number,
+      default: 0,
+      min: [0, "todayHours cannot be negative"],
+    },
+
+    age: {
+      type: Number,
+      min: [0, "age cannot be negative"],
     },
   },
   {
