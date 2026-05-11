@@ -13,7 +13,11 @@ app.use(
   cors({
     origin: IS_PRODUCTION
       ? "https://yourproductiondomain.com" // update this for production
-      : ["http://localhost:5173", "http://localhost:5050", "http://127.0.0.1:5173"],
+      : [
+          "http://localhost:5173",
+          "http://localhost:5050",
+          "http://127.0.0.1:5173",
+        ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
