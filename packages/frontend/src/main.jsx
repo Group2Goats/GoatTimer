@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import About from "./components/About.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
+import Profile from "./components/Profile.jsx";
 
 const root = document.getElementById("root");
 
@@ -37,6 +38,14 @@ ReactDOM.createRoot(root).render(
         }
       />
       <Route path="/about" element={<About />} />
+      <Route
+        path="/profile"
+        element={
+          <RequireAuth>
+            <Profile />
+          </RequireAuth>
+        }
+      />
     </Routes>
   </BrowserRouter>,
 );
