@@ -28,6 +28,7 @@ function Login() {
       }
 
       const { user } = await res.json();
+      localStorage.setItem("userId", user._id);
       const redirectPath =
         typeof location.state?.from?.pathname === "string"
           ? location.state.from.pathname

@@ -37,6 +37,7 @@ function Signup() {
       }
 
       const { user } = await res.json();
+      localStorage.setItem("userId", user._id);
 
       if (user.commitmentLevel) {
         navigate("/dashboard", { replace: true });
