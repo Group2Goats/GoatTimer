@@ -37,7 +37,7 @@ function Navbar() {
         <NavigationMenu.Item>
           <NavigationMenu.Trigger className={styles.NavTrigger}>
             <NavigationMenu.Link className={styles.NavLink} href={route}>
-              Focus
+              Sign Up
             </NavigationMenu.Link>
           </NavigationMenu.Trigger>
           <NavigationMenu.Content className={styles.NavContent}>
@@ -50,25 +50,12 @@ function Navbar() {
         <NavigationMenu.Item>
           <NavigationMenu.Trigger className={styles.NavTrigger}>
             <NavigationMenu.Link className={styles.NavLink} href={route}>
-              Compete
+              Sign In
             </NavigationMenu.Link>
           </NavigationMenu.Trigger>
           <NavigationMenu.Content className={styles.NavContent}>
             <div className={styles.DropdownCard}>
               Track goals and finish what you planned.
-            </div>
-          </NavigationMenu.Content>
-        </NavigationMenu.Item>
-
-        <NavigationMenu.Item>
-          <NavigationMenu.Trigger className={styles.NavTrigger}>
-            <NavigationMenu.Link className={styles.NavLink} href={route}>
-              Win
-            </NavigationMenu.Link>
-          </NavigationMenu.Trigger>
-          <NavigationMenu.Content className={styles.NavContent}>
-            <div className={styles.DropdownCard}>
-              Turn consistency into real progress.
             </div>
           </NavigationMenu.Content>
         </NavigationMenu.Item>
