@@ -80,6 +80,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .profile-btn {
@@ -91,6 +93,7 @@ body {
   padding: 8px 22px;
   border-radius: 20px;
   transition: opacity 0.18s ease;
+  white-space: nowrap;
 }
 
 .profile-btn:hover {
@@ -100,7 +103,9 @@ body {
 .dashboard-header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .logout-btn {
@@ -112,6 +117,7 @@ body {
   padding: 8px 22px;
   border-radius: 20px;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.18s ease;
 }
 
