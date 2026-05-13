@@ -25,6 +25,9 @@ function Profile() {
   }, []);
 
   function handleLogout() {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
+
     fetch("/api/auth/logout", {
       method: "POST",
       credentials: "include",

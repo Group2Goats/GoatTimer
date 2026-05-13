@@ -49,7 +49,7 @@ function Navbar() {
 
         <NavigationMenu.Item>
           <NavigationMenu.Trigger className={styles.NavTrigger}>
-            <NavigationMenu.Link className={styles.NavLink} href={route}>
+            <NavigationMenu.Link className={styles.NavLink} href="/login">
               Sign In
             </NavigationMenu.Link>
           </NavigationMenu.Trigger>

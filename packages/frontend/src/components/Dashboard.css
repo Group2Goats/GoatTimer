@@ -97,6 +97,29 @@ body {
   opacity: 0.8;
 }
 
+.dashboard-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logout-btn {
+  background: none;
+  border: 1.5px solid var(--brand-black);
+  color: var(--brand-black);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  padding: 8px 22px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.logout-btn:hover {
+  background: var(--brand-black);
+  color: var(--white);
+}
+
 .current-date {
   color: var(--accent-purple);
   font-size: 1.6rem;

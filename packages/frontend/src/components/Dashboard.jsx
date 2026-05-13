@@ -1,9 +1,23 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import "./Dashboard.css";
 import Timer from "./Timer";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
+
+    fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    }).then(() => {
+      localStorage.removeItem("userId");
+      navigate("/");
+    });
+  }
   return (
     <div className="user-layout">
       {}
@@ -14,9 +28,14 @@ const Dashboard = () => {
           <header className="dashboard-header">
             <div className="dashboard-header-top">
               <p className="current-date">Tuesday Apr 28</p>
-              <Link to="/profile" className="profile-btn">
-                Profile
-              </Link>
+              <div className="dashboard-header-actions">
+                <Link to="/profile" className="profile-btn">
+                  Profile
+                </Link>
+                <button className="logout-btn" onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
             </div>
             <h1 className="greeting-text">Good morning, Tan</h1>
           </header>
