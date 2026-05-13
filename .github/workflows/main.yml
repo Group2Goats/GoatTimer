@@ -11,12 +11,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 22.x
-    - run: npm ci
-    - run: npm run -w backend lint
-    - run: npm run -w frontend lint
-    - run: npm run -w frontend build
-    #- run: npm run -w tests test
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+      - run: npm ci
+      - run: npm run -w backend lint
+      - run: npm run -w frontend lint
+      - run: npm run -w frontend build
+      #- run: npm run -w tests test
