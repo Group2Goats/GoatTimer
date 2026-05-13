@@ -13,8 +13,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v3
-    with:
-      node-version: 22.x
+      with:
+        node-version: 22.x
     - run: npm ci
     - run: npm run -w backend lint
     - run: npm run -w frontend lint
