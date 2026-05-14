@@ -2,6 +2,13 @@ import mongoose from "mongoose";
 
 const groupSchema = new mongoose.Schema(
   {
+    // Group name
+    name: {
+      type: String,
+      default: "Untitled Group",
+      trim: true,
+    },
+
     // User who created the group
     owner: {
       type: mongoose.Schema.Types.ObjectId,

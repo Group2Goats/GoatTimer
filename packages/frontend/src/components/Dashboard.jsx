@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import "./Dashboard.css";
 import Timer from "./Timer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [groupId, setGroupId] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        const groups = data?.user?.groups;
+        if (Array.isArray(groups) && groups.length > 0) {
+          // groups can be ids or populated objects
+          const first = groups[0];
+          setGroupId(typeof first === "string" ? first : first._id);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   function handleLogout() {
     const confirmed = window.confirm("Are you sure you want to log out?");
@@ -29,6 +44,15 @@ const Dashboard = () => {
             <div className="dashboard-header-top">
               <p className="current-date">Tuesday Apr 28</p>
               <div className="dashboard-header-actions">
+                {groupId ? (
+                  <Link to={`/groups/${groupId}`} className="profile-btn">
+                    View Group
+                  </Link>
+                ) : (
+                  <Link to="/create-group" className="profile-btn">
+                    Create Group
+                  </Link>
+                )}
                 <Link to="/profile" className="profile-btn">
                   Profile
                 </Link>

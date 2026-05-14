@@ -10,16 +10,17 @@ import connectDB from "./config/database.js";
 import { PORT, IS_PRODUCTION } from "./config/env.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
+import requireAuth from "./middleware/requireAuth.js";
 
 dotenv.config();
 
 const app = express();
 
-/// CORS configuration - allow credentials and frontend origin
+// cors
 app.use(
   cors({
     origin: IS_PRODUCTION
-      ? "https://yourproductiondomain.com" // update this for production
+      ? "https://yourproductiondomain.com"
       : [
           "http://localhost:5173",
           "http://localhost:5050",
@@ -33,28 +34,24 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Group fields that can be updated
-const allowedGroupUpdateFields = ["groupGoal", "hours"];
+// fields owner can edit
+const allowedGroupUpdateFields = ["name", "groupGoal", "hours"];
 
-// Gets only the fields that are allowed to update
 function getAllowedUpdates(body, allowedFields) {
   return Object.fromEntries(
     Object.entries(body).filter(([key]) => allowedFields.includes(key)),
   );
 }
 
-// Checks if username or email already exists
 function isDuplicateKeyError(error) {
   return error?.code === 11000;
 }
 
-// Makes the duplicate error easier to read
 function getDuplicateKeyMessage(error) {
   const field = Object.keys(error.keyPattern ?? {})[0] ?? "field";
   return `${field} already exists`;
 }
 
-// Sends error messages to the frontend
 function sendError(res, error, defaultStatus = 500) {
   if (isDuplicateKeyError(error)) {
     return res.status(409).json({ error: getDuplicateKeyMessage(error) });
@@ -69,7 +66,6 @@ function sendError(res, error, defaultStatus = 500) {
   });
 }
 
-// Makes sure users is always an array
 function getUsersArray(users) {
   if (Array.isArray(users)) {
     return users;
@@ -82,18 +78,18 @@ function getUsersArray(users) {
   return [users];
 }
 
-// Test server
+// test
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });
 
-// KEEP AUTH ROUTES FROM routes/auth.js
+// auth routes
 app.use("/api/auth", authRoutes);
 
-// KEEP USER ROUTES FROM routes/users.js
+// user routes
 app.use("/api/users", userRoutes);
 
-// Get all Groups
+// list groups
 app.get("/api/groups", async (req, res) => {
   try {
     const groups = await Group.find()
@@ -107,13 +103,14 @@ app.get("/api/groups", async (req, res) => {
   }
 });
 
-// Post a group, person who created it should be the owner
-app.post("/api/groups", async (req, res) => {
+// create group, requester is the owner
+app.post("/api/groups", requireAuth, async (req, res) => {
   try {
-    const { owner, groupGoal = 0, hours = 0 } = req.body;
+    const { groupGoal = 0, hours = 0 } = req.body;
+    const owner = req.auth.userId;
     const users = getUsersArray(req.body.users);
 
-    if (!owner || !mongoose.Types.ObjectId.isValid(owner)) {
+    if (!mongoose.Types.ObjectId.isValid(owner)) {
       return res.status(400).json({ error: "Valid owner id is required" });
     }
 
@@ -123,7 +120,6 @@ app.post("/api/groups", async (req, res) => {
       return res.status(404).json({ error: "Owner user not found" });
     }
 
-    // Owner is automatically added to the group users list
     const groupUsers = [...new Set([owner, ...users].map(String))];
 
     const group = await Group.create({
@@ -133,7 +129,6 @@ app.post("/api/groups", async (req, res) => {
       hours,
     });
 
-    // Add this group to every user's groups array
     await User.updateMany(
       { _id: { $in: groupUsers } },
       { $addToSet: { groups: group._id } },
@@ -149,7 +144,7 @@ app.post("/api/groups", async (req, res) => {
   }
 });
 
-// Get 1 group by params
+// get group by id
 app.get("/api/groups/:groupParam", async (req, res) => {
   try {
     const { groupParam } = req.params;
@@ -172,12 +167,15 @@ app.get("/api/groups/:groupParam", async (req, res) => {
   }
 });
 
-// Update groupGoal, hours, and add/remove users
-app.put("/api/groups/:groupParam", async (req, res) => {
+// update group
+// owner: edit name/goal/hours, remove any user
+// non-owner: only allowed to add self (join)
+app.put("/api/groups/:groupParam", requireAuth, async (req, res) => {
   try {
     const { groupParam } = req.params;
     const addUsers = getUsersArray(req.body.addUsers);
     const removeUsers = getUsersArray(req.body.removeUsers);
+    const requesterId = req.auth.userId;
 
     if (!mongoose.Types.ObjectId.isValid(groupParam)) {
       return res.status(400).json({ error: "Invalid group id" });
@@ -189,9 +187,31 @@ app.put("/api/groups/:groupParam", async (req, res) => {
       return res.status(404).json({ error: "Group not found" });
     }
 
-    const updates = getAllowedUpdates(req.body, allowedGroupUpdateFields);
+    const ownerId = group.owner.toString();
+    const isOwner = ownerId === requesterId;
 
-    Object.assign(group, updates);
+    const fieldUpdates = getAllowedUpdates(req.body, allowedGroupUpdateFields);
+    const isFieldUpdate = Object.keys(fieldUpdates).length > 0;
+
+    // non-owners can only add themselves (join)
+    if (!isOwner) {
+      if (isFieldUpdate || removeUsers.length > 0) {
+        return res
+          .status(403)
+          .json({ error: "Only the group owner can do that" });
+      }
+
+      const onlyAddingSelf =
+        addUsers.length === 1 && String(addUsers[0]) === requesterId;
+
+      if (!onlyAddingSelf) {
+        return res
+          .status(403)
+          .json({ error: "You can only add yourself to a group" });
+      }
+    }
+
+    Object.assign(group, fieldUpdates);
 
     const invalidAddUsers = addUsers.filter(
       (userId) => !mongoose.Types.ObjectId.isValid(userId),
@@ -208,25 +228,21 @@ app.put("/api/groups/:groupParam", async (req, res) => {
     const currentUsers = group.users.map((userId) => userId.toString());
     const usersToAdd = addUsers.map(String);
     const usersToRemove = removeUsers.map(String);
-    const ownerId = group.owner.toString();
 
-    // Add users
     const updatedUsers = [...new Set([...currentUsers, ...usersToAdd])];
 
-    // Remove users, but do not remove the owner
+    // owner cannot be removed
     group.users = updatedUsers.filter((userId) => {
       return userId === ownerId || !usersToRemove.includes(userId);
     });
 
     await group.save();
 
-    // Add group id to users who were added
     await User.updateMany(
       { _id: { $in: usersToAdd } },
       { $addToSet: { groups: group._id } },
     );
 
-    // Remove group id from users who were removed
     await User.updateMany(
       { _id: { $in: usersToRemove.filter((userId) => userId !== ownerId) } },
       { $pull: { groups: group._id } },
