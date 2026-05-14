@@ -1,9 +1,69 @@
-import React from "react";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import "./Dashboard.css";
 import Timer from "./Timer";
 
 const Dashboard = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
+    fetch(`/api/users/${userId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load user");
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, [navigate]);
+
+  if (loading) {
+    return <div className="user-layout">Loading...</div>;
+  }
+
+  const now = new Date();
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const dateString = `${dayNames[now.getDay()]} ${monthNames[now.getMonth()]} ${now.getDate()}`;
+
+  const weeklyGoal = user?.weeklyGoalHours || 15;
+  const hoursStudied = 11.25; // Placeholder until session tracking is built
+  const progress =
+    weeklyGoal > 0 ? Math.round((hoursStudied / weeklyGoal) * 100) : 0;
+
   return (
     <div className="user-layout">
       {}
@@ -13,25 +73,33 @@ const Dashboard = () => {
         <main className="dashboard-main">
           <header className="dashboard-header">
             <div className="dashboard-header-top">
-              <p className="current-date">Tuesday Apr 28</p>
+              <p className="current-date">{dateString}</p>
               <Link to="/profile" className="profile-btn">
                 Profile
               </Link>
             </div>
-            <h1 className="greeting-text">Good morning, Tan</h1>
+            <h1 className="greeting-text">
+              Good morning, {user?.name || "G.O.A.T"}
+            </h1>
           </header>
 
           <section className="progress-card">
             <div className="progress-header">
               <span>This week</span>
               <span className="progress-hours">
-                <strong>11.25/15</strong> hours
+                <strong>
+                  {hoursStudied}/{weeklyGoal}
+                </strong>{" "}
+                hours
               </span>
             </div>
             <div className="progress-track">
-              <div className="progress-fill" style={{ width: "75%" }}></div>
+              <div
+                className="progress-fill"
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
-            <div className="progress-percentage">75%</div>
+            <div className="progress-percentage">{progress}%</div>
           </section>
 
           <Timer />

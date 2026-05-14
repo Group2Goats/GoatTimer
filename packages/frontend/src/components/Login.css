@@ -9,7 +9,7 @@
 }
 
 .login-title {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-style: italic;
   font-weight: 700;
   font-size: clamp(2.4rem, 5vw, 3.8rem);
@@ -19,7 +19,7 @@
 }
 
 .login-toggle {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: 1.05rem;
   color: #444;
   margin: 0 0 32px;
@@ -38,7 +38,7 @@
 }
 
 .login-label {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: 1rem;
   font-weight: 600;
   color: #000807;
@@ -46,7 +46,7 @@
 }
 
 .login-input {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: 1rem;
   padding: 12px 14px;
   border: none;
@@ -76,7 +76,7 @@
 .login-button {
   align-self: center;
   margin-top: 12px;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-style: italic;
   font-size: clamp(1.3rem, 2.5vw, 1.8rem);
   font-weight: 700;

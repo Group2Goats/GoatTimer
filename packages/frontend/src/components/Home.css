@@ -62,7 +62,7 @@ body {
   padding: 8px 6px;
   color: var(--brand-black);
   text-decoration: none;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: clamp(1rem, 1.3vw, 1.7rem);
   font-weight: 600;
   line-height: 1;
@@ -233,7 +233,7 @@ body {
 .heroTitle {
   margin: 72px 0 42px;
   color: #000000;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-style: italic;
   font-weight: 700;
   font-size: clamp(4rem, 8vw, 7.5rem);
@@ -304,7 +304,7 @@ body {
   min-height: 92px;
   border-radius: 999px;
   border: 4px solid var(--brand-black);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-style: italic;
   font-size: clamp(1.8rem, 3vw, 3rem);
   line-height: 1;

@@ -11,10 +11,7 @@
 
 .timerDisplay {
   color: var(--white);
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: "EB Garamond", serif;
   font-size: 6rem;
   font-weight: 800;
   line-height: 1;
@@ -29,7 +26,7 @@
   border: none;
   border-radius: 35px;
   padding: 18px 45px;
-  font-family: Georgia, serif;
+  font-family: "EB Garamond", serif;
   font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;
@@ -48,7 +45,7 @@
   border: none;
   border-radius: 35px;
   padding: 10px;
-  font-family: Georgia, serif;
+  font-family: "EB Garamond", serif;
   font-size: 1.2rem;
   font-weight: bold;
 }
