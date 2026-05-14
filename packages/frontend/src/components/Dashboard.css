@@ -11,7 +11,7 @@
 body {
   background: var(--bg);
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   color: var(--brand-black);
 }
 
@@ -86,7 +86,7 @@ body {
   text-decoration: none;
   background: var(--brand-black);
   color: var(--white);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: 1rem;
   padding: 8px 22px;
   border-radius: 20px;
@@ -188,7 +188,7 @@ body {
   border: none;
   border-radius: 35px;
   padding: 18px 45px;
-  font-family: Georgia, serif;
+  font-family: "EB Garamond", serif;
   font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;

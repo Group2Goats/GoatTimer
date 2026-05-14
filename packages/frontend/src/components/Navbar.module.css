@@ -26,7 +26,7 @@
   padding: 8px 6px;
   color: var(--brand-black);
   text-decoration: none;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: clamp(1rem, 1.3vw, 1.7rem);
   font-weight: 600;
   line-height: 1;
