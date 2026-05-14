@@ -24,11 +24,6 @@ function GroupDetail() {
   }, [navigate]);
 
   useEffect(() => {
-    loadGroup();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupId]);
-
-  function loadGroup() {
     fetch(`/api/groups/${groupId}`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Group not found");
@@ -39,7 +34,7 @@ function GroupDetail() {
         setName(data.name || "");
       })
       .catch((err) => setError(err.message));
-  }
+  }, [groupId]);
 
   function handleSaveName() {
     setError("");

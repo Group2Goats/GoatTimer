@@ -40,17 +40,12 @@ function Navbar() {
         {isLoggedIn && (
           <NavigationMenu.Item>
             <NavigationMenu.Trigger className={styles.NavTrigger}>
-              <NavigationMenu.Link
-                className={styles.NavLink}
-                href="/dashboard"
-              >
+              <NavigationMenu.Link className={styles.NavLink} href="/dashboard">
                 Dashboard
               </NavigationMenu.Link>
             </NavigationMenu.Trigger>
             <NavigationMenu.Content className={styles.NavContent}>
-              <div className={styles.DropdownCard}>
-                Back to your dashboard.
-              </div>
+              <div className={styles.DropdownCard}>Back to your dashboard.</div>
             </NavigationMenu.Content>
           </NavigationMenu.Item>
         )}
