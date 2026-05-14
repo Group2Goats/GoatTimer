@@ -28,7 +28,7 @@
 }
 
 .profileLabel {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: clamp(1.15rem, 1.6vw, 1.6rem);
   font-weight: 700;
   color: var(--brand-black);
@@ -44,7 +44,7 @@
   border: 1.5px solid rgba(0, 8, 7, 0.16);
   background: rgba(255, 255, 255, 0.42);
   color: #858585;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: clamp(1rem, 1.2vw, 1.35rem);
 }
 
@@ -59,7 +59,7 @@
   border: none;
   border-radius: 999px;
   color: var(--white);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-weight: 700;
   cursor: pointer;
   transition:
