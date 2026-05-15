@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Timer.module.css";
 import MouseLock from "./MouseLock.jsx";
-import { useNavigate } from "react-router";
 
-const MAX_TIME = 1500; // 25 minutes in seconds
+/* const STUDY_TIME = 1500;
+const SHORT_BREAK_TIME = 300;
+const LONG_BREAK_TIME = 1800; */
+
+// For testing:
+const STUDY_TIME = 25;
+const SHORT_BREAK_TIME = 5;
+const LONG_BREAK_TIME = 30;
 
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
@@ -26,63 +32,95 @@ function SessionButton({ isRunning, onClick }) {
   );
 }
 
-function Timer() {
-  const navigate = useNavigate();
-  const [time, setTime] = useState(MAX_TIME);
+function Timer({ userId }) {
+  const [time, setTime] = useState(STUDY_TIME);
   const [isRunning, setIsRunning] = useState(false);
+  const [isStudying, setIsStudying] = useState(true);
+  const [rounds, setRounds] = useState(1);
+  const [isSessionComplete, setIsSessionComplete] = useState(false);
+
   const canvasRef = useRef(null);
   const sentTimeRef = useRef(0);
+  const hasCompletedRef = useRef(false);
 
-  const wasRunningRef = useRef(false);
+  const getNextSession = useCallback(() => {
+    if (isStudying) {
+      const nextIsLongBreak = rounds % 4 === 0;
+
+      return {
+        isStudying: false,
+        time: nextIsLongBreak ? LONG_BREAK_TIME : SHORT_BREAK_TIME,
+      };
+    }
+
+    return {
+      isStudying: true,
+      time: STUDY_TIME,
+    };
+  }, [isStudying, rounds]);
+
+  const switchTime = useCallback(() => {
+    const nextSession = getNextSession();
+
+    setIsStudying(nextSession.isStudying);
+    setTime(nextSession.time);
+    setIsRunning(false);
+
+    sentTimeRef.current = 0;
+    hasCompletedRef.current = false;
+
+    if (!isStudying) {
+      setRounds((prevRounds) => prevRounds + 1);
+    }
+  }, [isStudying, getNextSession]);
 
   useEffect(() => {
     if (!isRunning) return;
 
     const intervalId = setInterval(() => {
-      setTime((prev) => prev - 1);
+      setTime((prevTime) => {
+        if (prevTime <= 1) {
+          setIsRunning(false);
+          setIsSessionComplete(true);
+          return 0;
+        }
 
-      if (time <= 0) {
-        setIsRunning(false);
-        setTime(0);
-      }
+        return prevTime - 1;
+      });
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [isRunning, time]);
+  }, [isRunning]);
 
   useEffect(() => {
-    async function sendTotalTime() {
-      const lapsedTime = MAX_TIME - time - sentTimeRef.current;
-      sentTimeRef.current += lapsedTime;
+    if (time !== 0 || hasCompletedRef.current) return;
 
-      if (lapsedTime === 0) return;
+    hasCompletedRef.current = true;
 
-      /* try {
-        await fetch(`/api/users/${userId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            totalTime,
-          }),
-        });
-      } catch (error) {
+    const completedTime = isStudying ? STUDY_TIME - sentTimeRef.current : 0;
+
+    if (completedTime > 0) {
+      sentTimeRef.current += completedTime;
+
+      /*
+      fetch(`/api/users/${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lapsedTime: completedTime,
+        }),
+      }).catch((error) => {
         console.error("Failed to send total time:", error);
-      } */
-      console.log("Lapsed time:", lapsedTime);
-      if (time === 0) {
-        // create component with break timer and navigate to it
-        navigate(0);
-      }
+      });
+      */
+
+      console.log("Completed study time:", completedTime);
     }
 
-    if (wasRunningRef.current && !isRunning) {
-      sendTotalTime();
-    }
-
-    wasRunningRef.current = isRunning;
-  }, [isRunning, time, navigate]);
+    switchTime();
+  }, [time, isStudying, userId, switchTime]);
 
   const handleLockChange = useCallback((locked) => {
     setIsRunning(locked);
@@ -103,6 +141,8 @@ function Timer() {
         console.error(error);
       }
     }
+
+    setIsSessionComplete(false);
   }
 
   function stopSession() {
@@ -123,6 +163,22 @@ function Timer() {
 
   return (
     <div className={styles.timerCard}>
+      <div style={{ position: "relative" }}>
+        {!isSessionComplete && (
+          <div className={styles.roundsInfo} style={{ color: "white" }}>
+            {isStudying ? `Focus Round ${rounds}` : "Break Time"}
+          </div>
+        )}
+      </div>
+
+      <div style={{ position: "relative" }}>
+        {isSessionComplete && (
+          <div className={styles.roundsInfo} style={{ color: "white" }}>
+            Session complete! Press the button to continue.
+          </div>
+        )}
+      </div>
+
       <ClockDisplay time={time} />
 
       <MouseLock canvasRef={canvasRef} onLockChange={handleLockChange} />
