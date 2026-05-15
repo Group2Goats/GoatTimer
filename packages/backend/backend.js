@@ -7,7 +7,6 @@ import connectDB from "./config/database.js";
 import { PORT, IS_PRODUCTION } from "./config/env.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
-import requireAuth from "./middleware/requireAuth.js";
 import groupRoutes from "./routes/groups.js";
 
 dotenv.config();
