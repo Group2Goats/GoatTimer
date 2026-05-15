@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { vi } from "vitest";
 
-process.env.JWT_SECRET ||= "test-secret";
+process.env.JWT_SECRET = "test-secret";
 
 vi.mock("@backend/config/env.js", () => ({
   IS_PRODUCTION: false,
