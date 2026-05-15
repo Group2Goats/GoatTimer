@@ -7,7 +7,16 @@ const backendRoot = path.resolve(
   "..",
 );
 
-dotenv.config({ path: path.join(backendRoot, ".env"), quiet: true });
+const envFiles = [
+  path.join(process.cwd(), ".env.local"),
+  path.join(process.cwd(), ".env"),
+  path.join(backendRoot, ".env.local"),
+  path.join(backendRoot, ".env"),
+];
+
+for (const envFile of new Set(envFiles)) {
+  dotenv.config({ path: envFile, quiet: true });
+}
 
 export const MONGO_URI = process.env.MONGO_URI;
 export const JWT_SECRET = process.env.JWT_SECRET;
