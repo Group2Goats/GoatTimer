@@ -1,12 +1,16 @@
 import os from "node:os";
 import path from "node:path";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const originalCwd = process.cwd();
 const originalMongoUri = process.env.MONGO_URI;
 const originalJwtSecret = process.env.JWT_SECRET;
 const temporaryDirectories = [];
+const cwdEnvContents =
+  "MONGO_URI=mongodb://127.0.0.1:27017/cwd_env_test\nJWT_SECRET=cwd-secret\n";
+const cwdEnvLocalContents =
+  "MONGO_URI=mongodb://127.0.0.1:27017/cwd_env_local_test\nJWT_SECRET=cwd-local-secret\n";
 
 afterEach(async () => {
   process.chdir(originalCwd);
@@ -31,13 +35,22 @@ afterEach(async () => {
 });
 
 describe.sequential("backend env config", () => {
-  it("loads required values from a cwd .env file", async () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("prefers cwd .env.local over cwd .env for required values", async () => {
     const directory = await mkdtemp(path.join(os.tmpdir(), "goattimer-env-"));
     temporaryDirectories.push(directory);
 
     await writeFile(
       path.join(directory, ".env"),
-      "MONGO_URI=mongodb://127.0.0.1:27017/cwd_env_test\nJWT_SECRET=cwd-secret\n",
+      cwdEnvContents,
+      "utf8",
+    );
+    await writeFile(
+      path.join(directory, ".env.local"),
+      cwdEnvLocalContents,
       "utf8",
     );
 
@@ -47,7 +60,9 @@ describe.sequential("backend env config", () => {
 
     const envModule = await import("@backend/config/env.js");
 
-    expect(envModule.MONGO_URI).toBe("mongodb://127.0.0.1:27017/cwd_env_test");
-    expect(envModule.JWT_SECRET).toBe("cwd-secret");
+    expect(envModule.MONGO_URI).toBe(
+      "mongodb://127.0.0.1:27017/cwd_env_local_test",
+    );
+    expect(envModule.JWT_SECRET).toBe("cwd-local-secret");
   });
 });

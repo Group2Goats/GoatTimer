@@ -7,15 +7,31 @@ const backendRoot = path.resolve(
   "..",
 );
 
+// Loaded from lowest to highest precedence.
 const envFiles = [
-  path.join(process.cwd(), ".env.local"),
-  path.join(process.cwd(), ".env"),
-  path.join(backendRoot, ".env.local"),
   path.join(backendRoot, ".env"),
+  path.join(backendRoot, ".env.local"),
+  path.join(process.cwd(), ".env"),
+  path.join(process.cwd(), ".env.local"),
 ];
+const uniqueEnvFiles = [...new Set(envFiles)];
 
-for (const envFile of new Set(envFiles)) {
-  dotenv.config({ path: envFile, quiet: true });
+const fileEnv = {};
+
+for (const envFile of uniqueEnvFiles) {
+  const { parsed } = dotenv.config({
+    path: envFile,
+    quiet: true,
+    processEnv: {},
+  });
+
+  if (parsed) {
+    Object.assign(fileEnv, parsed);
+  }
+}
+
+for (const [name, value] of Object.entries(fileEnv)) {
+  process.env[name] ??= value;
 }
 
 export const MONGO_URI = process.env.MONGO_URI;
