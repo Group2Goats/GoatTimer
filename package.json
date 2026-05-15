@@ -17,7 +17,9 @@
   "scripts": {
     "format": "prettier --write './**/*.{js,jsx,json,css,md}' --config ./.prettierrc",
     "lint": "npm -w frontend run lint && npm -w backend run lint",
-    "lint:fix": "npm -w frontend run lint:fix && npm -w backend run lint:fix"
+    "lint:fix": "npm -w frontend run lint:fix && npm -w backend run lint:fix",
+    "test": "npm run test:build && npm -w tests run test",
+    "test:build": "npm -w frontend run build"
   },
   "workspaces": [
     "packages/*"
