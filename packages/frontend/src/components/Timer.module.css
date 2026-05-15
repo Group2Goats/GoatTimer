@@ -49,3 +49,10 @@
   font-size: 1.2rem;
   font-weight: bold;
 }
+
+.roundsInfo {
+  color: rgb(126, 255, 97) !important;
+  font-family: "EB Garamond", serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+}
