@@ -10,7 +10,7 @@
 }
 
 .committed-title {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-style: italic;
   font-weight: 700;
   font-size: clamp(2.2rem, 5vw, 3.6rem);
@@ -20,7 +20,7 @@
 }
 
 .committed-subtitle {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: clamp(0.95rem, 1.4vw, 1.15rem);
   color: #444;
   margin: 0 0 40px;
@@ -65,13 +65,13 @@
 }
 
 .tier-label {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: 1rem;
   color: #000807;
 }
 
 .tier-hours {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-style: italic;
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   color: #000807;
@@ -82,7 +82,7 @@
 }
 
 .tier-daily {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: 0.85rem;
   color: #555;
 }
@@ -104,7 +104,7 @@
 
 .btn-back,
 .btn-letsgo {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", serif;
   font-size: clamp(1.1rem, 2vw, 1.5rem);
   border-radius: 999px;
   cursor: pointer;
