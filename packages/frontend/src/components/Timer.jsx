@@ -38,6 +38,7 @@ function Timer({ userId }) {
   const [isStudying, setIsStudying] = useState(true);
   const [rounds, setRounds] = useState(1);
   const [isSessionComplete, setIsSessionComplete] = useState(false);
+  const [securityError, setSecurityError] = useState(false);
 
   const canvasRef = useRef(null);
   const sentTimeRef = useRef(0);
@@ -137,6 +138,8 @@ function Timer({ userId }) {
     } catch (error) {
       if (error.name === "NotSupportedError") {
         await canvas.requestPointerLock();
+      } else if (error.name === "SecurityError") {
+        setSecurityError(true);
       } else {
         console.error(error);
       }
@@ -161,9 +164,19 @@ function Timer({ userId }) {
     }
   }
 
+  useEffect(() => {
+    if (!securityError) return;
+
+    const intervalId = setInterval(() => {
+      setSecurityError(false);
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [securityError]);
+
   return (
     <div className={styles.timerCard}>
-      <div style={{ position: "relative" }}>
+      <div className={styles.messageDiv}>
         {!isSessionComplete && (
           <div className={styles.roundsInfo} style={{ color: "white" }}>
             {isStudying ? `Focus Round ${rounds}` : "Break Time"}
@@ -171,7 +184,7 @@ function Timer({ userId }) {
         )}
       </div>
 
-      <div style={{ position: "relative" }}>
+      <div className={styles.messageDiv}>
         {isSessionComplete && (
           <div className={styles.roundsInfo} style={{ color: "white" }}>
             Session complete! Press the button to continue.
@@ -185,6 +198,13 @@ function Timer({ userId }) {
 
       <SessionButton isRunning={isRunning} onClick={handleSessionToggle} />
 
+      <div className={styles.messageDiv}>
+        {securityError && (
+          <div className={styles.errorInfo}>
+            Cannot start the session that quick :/
+          </div>
+        )}
+      </div>
       <p className={styles.sessionInfo}>
         Press stop button or ESC to stop timer
       </p>

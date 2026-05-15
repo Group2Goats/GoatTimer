@@ -50,9 +50,22 @@
   font-weight: bold;
 }
 
+.messageDiv { 
+  position: "relative" 
+}
+
 .roundsInfo {
   color: rgb(126, 255, 97) !important;
   font-family: "EB Garamond", serif;
   font-size: 1.7rem;
   font-weight: 800;
+}
+
+.errorInfo {
+  color: rgb(255, 0, 0) !important;
+  font-family: "EB Garamond", serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  position: absolute;
+  justify-self: center;
 }
