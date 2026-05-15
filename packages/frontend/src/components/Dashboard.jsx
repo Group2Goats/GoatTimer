@@ -35,7 +35,6 @@ const Dashboard = () => {
   }
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
