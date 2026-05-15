@@ -1,8 +1,18 @@
 import "@testing-library/jest-dom/vitest";
 import { vi } from "vitest";
 
-process.env.MONGO_URI ||= "mongodb://127.0.0.1:27017/goattimer_test";
-process.env.JWT_SECRET ||= "test-secret";
+process.env.JWT_SECRET = "test-secret";
+
+vi.mock("@backend/config/env.js", () => ({
+  IS_PRODUCTION: false,
+  JWT_SECRET: "test-secret",
+  MONGO_URI: undefined,
+  PORT: 5050,
+}));
+
+vi.mock("@backend/config/database.js", () => ({
+  default: vi.fn().mockResolvedValue(undefined),
+}));
 
 HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
   beginPath: vi.fn(),
