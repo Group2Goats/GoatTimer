@@ -5,6 +5,7 @@ import styles from "./Navbar.module.css";
 
 function Navbar() {
   const [route, setRoute] = useState("/signup");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -16,10 +17,12 @@ function Navbar() {
 
         if (isCurrent) {
           setRoute(res.ok ? "/dashboard" : "/signup");
+          setIsLoggedIn(res.ok);
         }
       } catch {
         if (isCurrent) {
           setRoute("/signup");
+          setIsLoggedIn(false);
         }
       }
     }
@@ -34,6 +37,19 @@ function Navbar() {
   return (
     <NavigationMenu.Root className={styles.NavRoot}>
       <NavigationMenu.List className={styles.NavList}>
+        {isLoggedIn && (
+          <NavigationMenu.Item>
+            <NavigationMenu.Trigger className={styles.NavTrigger}>
+              <NavigationMenu.Link className={styles.NavLink} href="/dashboard">
+                Dashboard
+              </NavigationMenu.Link>
+            </NavigationMenu.Trigger>
+            <NavigationMenu.Content className={styles.NavContent}>
+              <div className={styles.DropdownCard}>Back to your dashboard.</div>
+            </NavigationMenu.Content>
+          </NavigationMenu.Item>
+        )}
+
         <NavigationMenu.Item>
           <NavigationMenu.Trigger className={styles.NavTrigger}>
             <NavigationMenu.Link className={styles.NavLink} href={route}>
@@ -49,7 +65,7 @@ function Navbar() {
 
         <NavigationMenu.Item>
           <NavigationMenu.Trigger className={styles.NavTrigger}>
-            <NavigationMenu.Link className={styles.NavLink} href={route}>
+            <NavigationMenu.Link className={styles.NavLink} href="/login">
               Sign In
             </NavigationMenu.Link>
           </NavigationMenu.Trigger>

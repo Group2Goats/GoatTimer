@@ -2,7 +2,14 @@ import mongoose from "mongoose";
 
 const groupSchema = new mongoose.Schema(
   {
-    //user who created the group
+    // Group name
+    name: {
+      type: String,
+      default: "Untitled Group",
+      trim: true,
+    },
+
+    // User who created the group
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

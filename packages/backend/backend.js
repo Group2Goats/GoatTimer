@@ -16,7 +16,7 @@ const app = express();
 app.use(
   cors({
     origin: IS_PRODUCTION
-      ? "https://yourproductiondomain.com" // update this for production
+      ? "https://yourproductiondomain.com"
       : [
           "http://localhost:5173",
           "http://localhost:5050",
