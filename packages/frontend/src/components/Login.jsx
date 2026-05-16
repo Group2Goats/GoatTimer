@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import "./Login.css";
 
 const azureURL =
-  "http://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
 
 function Login() {
   const [email, setEmail] = useState("");
