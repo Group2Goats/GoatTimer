@@ -16,7 +16,7 @@ const app = express();
 app.use(
   cors({
     origin: IS_PRODUCTION
-      ? "https://yourproductiondomain.com"
+      ? "https://delightful-coast-0576a6c10.7.azurestaticapps.net"
       : [
           "http://localhost:5173",
           "http://localhost:5050",
