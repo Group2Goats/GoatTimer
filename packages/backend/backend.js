@@ -13,19 +13,31 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "https://delightful-coast-0576a6c10.7.azurestaticapps.net",
+  "http://localhost:5173",
+  "http://localhost:5050",
+  "http://127.0.0.1:5173",
+];
+
 app.use(
   cors({
-    origin: IS_PRODUCTION
-      ? "https://delightful-coast-0576a6c10.7.azurestaticapps.net"
-      : [
-          "http://localhost:5173",
-          "http://localhost:5050",
-          "http://127.0.0.1:5173",
-        ],
+    origin: function (origin, callback) {
+      console.log("Request Origin:", origin);
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   }),
 );
+
+app.options(/.*/, cors());
 
 app.use(express.json());
 app.use(cookieParser());
