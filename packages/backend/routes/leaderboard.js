@@ -46,7 +46,11 @@ export function createLeaderboardHandler({
     try {
       const scope = req.query.scope === "group" ? "group" : "global";
       const limit = getLeaderboardLimit(req.query.limit);
-      const currentUserId = req.auth.userId;
+      const currentUserId = req.auth?.userId;
+
+      if (!currentUserId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
 
       if (scope === "global") {
         const users = await UserModel.find()
@@ -61,13 +65,16 @@ export function createLeaderboardHandler({
         });
       }
 
-      const groupId = typeof req.query.groupId === "string" ? req.query.groupId : "";
+      const groupId =
+        typeof req.query.groupId === "string" ? req.query.groupId : "";
 
       if (!mongoose.Types.ObjectId.isValid(groupId)) {
         return res.status(400).json({ error: "Valid groupId is required" });
       }
 
-      const group = await GroupModel.findById(groupId).populate("users").lean();
+      const group = await GroupModel.findById(groupId)
+        .populate("users", "name email weeklyHours")
+        .lean();
 
       if (!group) {
         return res.status(404).json({ error: "Group not found" });
@@ -76,7 +83,9 @@ export function createLeaderboardHandler({
       const memberIds = group.users.map((user) => getUserId(user));
 
       if (!memberIds.includes(currentUserId)) {
-        return res.status(403).json({ error: "You are not a member of this group" });
+        return res
+          .status(403)
+          .json({ error: "You are not a member of this group" });
       }
 
       const users = [...group.users]

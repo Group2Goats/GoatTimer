@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import "./Dashboard.css";
 import Timer from "./Timer";
+import Leaderboard from "./Leaderboard";
 
 const AZURE_URL =
   "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
@@ -133,36 +134,7 @@ const Dashboard = () => {
         </main>
 
         <aside className="dashboard-sidebar">
-          <div className="leaderboard-card">
-            <h3 className="leaderboard-title">Top Globally this week</h3>
-            <ul className="leaderboard-list">
-              <li className="leaderboard-item">
-                <span className="rank-badge rank-top">1</span>
-                <span className="player-name">Afredo</span>
-                <span className="player-score">100h</span>
-              </li>
-              <li className="leaderboard-item">
-                <span className="rank-badge">2</span>
-                <span className="player-name">Adrian</span>
-                <span className="player-score">99h</span>
-              </li>
-              <li className="leaderboard-item">
-                <span className="rank-badge">3</span>
-                <span className="player-name">Bryan</span>
-                <span className="player-score">98h</span>
-              </li>
-              <li className="leaderboard-item">
-                <span className="rank-badge">4</span>
-                <span className="player-name">Aras</span>
-                <span className="player-score">97h</span>
-              </li>
-              <li className="leaderboard-item">
-                <span className="rank-badge">5</span>
-                <span className="player-name">Tan</span>
-                <span className="player-score">67h</span>
-              </li>
-            </ul>
-          </div>
+          <Leaderboard groupId={groupId} />
         </aside>
       </div>
     </div>
