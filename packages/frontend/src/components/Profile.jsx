@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import "./Profile.css";
 
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
+
 function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -9,7 +12,7 @@ function Profile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("/api/auth/me", { credentials: "include" })
+    fetch(`${AZURE_URL}/api/auth/me`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Not logged in");
         return res.json();
@@ -28,7 +31,7 @@ function Profile() {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (!confirmed) return;
 
-    fetch("/api/auth/logout", {
+    fetch(`${AZURE_URL}/api/auth/logout`, {
       method: "POST",
       credentials: "include",
     }).then(() => {
@@ -45,7 +48,7 @@ function Profile() {
     );
     if (!confirmed) return;
 
-    fetch(`/api/users/${user._id}`, {
+    fetch(`${AZURE_URL}/api/users/${user._id}`, {
       method: "DELETE",
       credentials: "include",
     })

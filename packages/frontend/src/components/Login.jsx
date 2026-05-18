@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import "./Login.css";
 
-const azureURL =
+const AZURE_URL =
   "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
 
 function Login() {
@@ -17,7 +17,7 @@ function Login() {
     setError("");
 
     try {
-      const res = await fetch(`${azureURL}/api/auth/login`, {
+      const res = await fetch(`${AZURE_URL}/api/auth/login`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
