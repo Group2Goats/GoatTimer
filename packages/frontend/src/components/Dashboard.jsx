@@ -1,25 +1,33 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import "./Dashboard.css";
 import Timer from "./Timer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [groupId, setGroupId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/auth/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+      .then((res) => {
+        if (!res.ok) throw new Error("Not logged in");
+        return res.json();
+      })
       .then((data) => {
-        const groups = data?.user?.groups;
+        setUser(data.user);
+        const groups = data.user?.groups;
         if (Array.isArray(groups) && groups.length > 0) {
-          // groups can be ids or populated objects
           const first = groups[0];
           setGroupId(typeof first === "string" ? first : first._id);
         }
+        setLoading(false);
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => {
+        navigate("/login");
+      });
+  }, [navigate]);
 
   function handleLogout() {
     const confirmed = window.confirm("Are you sure you want to log out?");
@@ -33,29 +41,6 @@ const Dashboard = () => {
       navigate("/");
     });
   }
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      navigate("/login");
-      return;
-    }
-
-    fetch(`/api/users/${userId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load user");
-        return res.json();
-      })
-      .then((data) => {
-        setUser(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  }, [navigate]);
 
   if (loading) {
     return <div className="user-layout">Loading...</div>;
@@ -87,21 +72,18 @@ const Dashboard = () => {
   ];
   const dateString = `${dayNames[now.getDay()]} ${monthNames[now.getMonth()]} ${now.getDate()}`;
 
-  const weeklyGoal = user?.weeklyGoalHours || 15;
-  const hoursStudied = 11.25; // Placeholder until session tracking is built
+  const weeklyGoal = user?.goal || 15;
+  const hoursStudied = user?.weeklyHours || 0;
   const progress =
     weeklyGoal > 0 ? Math.round((hoursStudied / weeklyGoal) * 100) : 0;
 
   return (
     <div className="user-layout">
-      {}
-
-      {}
       <div className="home-container">
         <main className="dashboard-main">
           <header className="dashboard-header">
             <div className="dashboard-header-top">
-              <p className="current-date">Tuesday Apr 28</p>
+              <p className="current-date">{dateString}</p>
               <div className="dashboard-header-actions">
                 {groupId ? (
                   <Link to={`/groups/${groupId}`} className="profile-btn">
@@ -119,10 +101,6 @@ const Dashboard = () => {
                   Logout
                 </button>
               </div>
-              <p className="current-date">{dateString}</p>
-              <Link to="/profile" className="profile-btn">
-                Profile
-              </Link>
             </div>
             <h1 className="greeting-text">
               Good morning, {user?.name || "G.O.A.T"}
@@ -142,7 +120,7 @@ const Dashboard = () => {
             <div className="progress-track">
               <div
                 className="progress-fill"
-                style={{ width: `${progress}%` }}
+                style={{ width: `${Math.min(progress, 100)}%` }}
               ></div>
             </div>
             <div className="progress-percentage">{progress}%</div>

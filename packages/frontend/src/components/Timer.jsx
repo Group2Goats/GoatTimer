@@ -32,53 +32,56 @@ function Timer() {
   const [isRunning, setIsRunning] = useState(false);
   const canvasRef = useRef(null);
   const sentTimeRef = useRef(0);
-
   const wasRunningRef = useRef(false);
 
   useEffect(() => {
     if (!isRunning) return;
 
     const intervalId = setInterval(() => {
-      setTime((prev) => prev - 1);
-
-      if (time <= 0) {
-        setIsRunning(false);
-        setTime(0);
-      }
+      setTime((prev) => {
+        if (prev <= 1) {
+          setIsRunning(false);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [isRunning, time]);
+  }, [isRunning]);
 
   useEffect(() => {
-    async function sendTotalTime() {
-      const lapsedTime = MAX_TIME - time - sentTimeRef.current;
-      sentTimeRef.current += lapsedTime;
+    async function sendStudyTime() {
+      const lapsedSeconds = MAX_TIME - time - sentTimeRef.current;
+      sentTimeRef.current += lapsedSeconds;
 
-      if (lapsedTime === 0) return;
+      if (lapsedSeconds <= 0) return;
 
-      /* try {
-        await fetch(`/api/users/${userId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            totalTime,
-          }),
+      const lapsedHours = lapsedSeconds / 3600;
+
+      try {
+        const userId = localStorage.getItem("userId");
+        if (!userId) return;
+
+        await fetch(`/api/users/${userId}/study-time`, {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ hours: lapsedHours }),
         });
       } catch (error) {
-        console.error("Failed to send total time:", error);
-      } */
-      console.log("Lapsed time:", lapsedTime);
+        console.error("Failed to save study time:", error);
+      }
+
       if (time === 0) {
-        // create component with break timer and navigate to it
-        navigate(0);
+        // Reset timer for next session
+        setTime(MAX_TIME);
+        sentTimeRef.current = 0;
       }
     }
 
     if (wasRunningRef.current && !isRunning) {
-      sendTotalTime();
+      sendStudyTime();
     }
 
     wasRunningRef.current = isRunning;
