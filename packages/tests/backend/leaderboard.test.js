@@ -21,20 +21,11 @@ function createUserQuery(users) {
   return query;
 }
 
-function createGroupQuery(group) {
-  const query = {};
-
-  query.populate = vi.fn(() => query);
-  query.lean = vi.fn().mockResolvedValue(group);
-
-  return query;
-}
-
 describe("leaderboard route handler", () => {
-  it("returns global users ranked by weekly hours", async () => {
+  it("returns global users ranked by total hours", async () => {
     const userQuery = createUserQuery([
-      { _id: "user-1", name: "Afredo", weeklyHours: 100 },
-      { _id: "user-2", name: "Adrian", weeklyHours: 99 },
+      { _id: "user-1", name: "Afredo", totalHours: 100 },
+      { _id: "user-2", name: "Adrian", totalHours: 99 },
     ]);
     const UserModel = {
       find: vi.fn(() => userQuery),
@@ -51,9 +42,9 @@ describe("leaderboard route handler", () => {
     );
 
     expect(UserModel.find).toHaveBeenCalledOnce();
-    expect(userQuery.sort).toHaveBeenCalledWith({ weeklyHours: -1, name: 1 });
+    expect(userQuery.sort).toHaveBeenCalledWith({ totalHours: -1, name: 1 });
     expect(userQuery.limit).toHaveBeenCalledWith(2);
-    expect(userQuery.select).toHaveBeenCalledWith("name email weeklyHours");
+    expect(userQuery.select).toHaveBeenCalledWith("name email totalHours");
     expect(res.json).toHaveBeenCalledWith({
       scope: "global",
       entries: [
@@ -61,72 +52,61 @@ describe("leaderboard route handler", () => {
           rank: 1,
           userId: "user-1",
           name: "Afredo",
-          weeklyHours: 100,
+          totalHours: 100,
           isCurrentUser: false,
         },
         {
           rank: 2,
           userId: "user-2",
           name: "Adrian",
-          weeklyHours: 99,
+          totalHours: 99,
           isCurrentUser: true,
         },
       ],
     });
   });
 
-  it("returns group users ranked by weekly hours", async () => {
-    const groupId = "665f5d34f1d2c3b4a5968701";
-    const groupQuery = createGroupQuery({
-      _id: groupId,
-      users: [
-        { _id: "user-1", name: "Afredo", weeklyHours: 7 },
-        { _id: "user-2", name: "Adrian", weeklyHours: 12 },
-        { _id: "user-3", name: "Bryan", weeklyHours: 4 },
-      ],
-    });
-    const GroupModel = {
-      findById: vi.fn(() => groupQuery),
+  it("fetches across all users even if a group scope is requested", async () => {
+    const userQuery = createUserQuery([
+      { _id: "user-1", name: "Afredo", totalHours: 14 },
+      { _id: "user-2", name: "Adrian", totalHours: 12 },
+    ]);
+    const UserModel = {
+      find: vi.fn(() => userQuery),
     };
-    const handler = createLeaderboardHandler({ GroupModel });
+    const handler = createLeaderboardHandler({ UserModel });
     const res = createResponse();
 
     await handler(
       {
         auth: { userId: "user-2" },
-        query: { scope: "group", groupId, limit: "3" },
+        query: {
+          scope: "group",
+          groupId: "665f5d34f1d2c3b4a5968701",
+          limit: "5",
+        },
       },
       res,
     );
 
-    expect(GroupModel.findById).toHaveBeenCalledWith(groupId);
-    expect(groupQuery.populate).toHaveBeenCalledWith(
-      "users",
-      "name email weeklyHours",
-    );
+    expect(UserModel.find).toHaveBeenCalledOnce();
+    expect(userQuery.sort).toHaveBeenCalledWith({ totalHours: -1, name: 1 });
     expect(res.json).toHaveBeenCalledWith({
-      scope: "group",
+      scope: "global",
       entries: [
         {
           rank: 1,
-          userId: "user-2",
-          name: "Adrian",
-          weeklyHours: 12,
-          isCurrentUser: true,
+          userId: "user-1",
+          name: "Afredo",
+          totalHours: 14,
+          isCurrentUser: false,
         },
         {
           rank: 2,
-          userId: "user-1",
-          name: "Afredo",
-          weeklyHours: 7,
-          isCurrentUser: false,
-        },
-        {
-          rank: 3,
-          userId: "user-3",
-          name: "Bryan",
-          weeklyHours: 4,
-          isCurrentUser: false,
+          userId: "user-2",
+          name: "Adrian",
+          totalHours: 12,
+          isCurrentUser: true,
         },
       ],
     });
@@ -141,50 +121,6 @@ describe("leaderboard route handler", () => {
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
       error: "Authentication required",
-    });
-  });
-
-  it("rejects group requests without a valid group id", async () => {
-    const handler = createLeaderboardHandler();
-    const res = createResponse();
-
-    await handler(
-      {
-        auth: { userId: "user-1" },
-        query: { scope: "group", groupId: "not-valid" },
-      },
-      res,
-    );
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({
-      error: "Valid groupId is required",
-    });
-  });
-
-  it("rejects group requests from non-members", async () => {
-    const groupId = "665f5d34f1d2c3b4a5968701";
-    const groupQuery = createGroupQuery({
-      _id: groupId,
-      users: [{ _id: "user-2", name: "Adrian", weeklyHours: 12 }],
-    });
-    const GroupModel = {
-      findById: vi.fn(() => groupQuery),
-    };
-    const handler = createLeaderboardHandler({ GroupModel });
-    const res = createResponse();
-
-    await handler(
-      {
-        auth: { userId: "user-1" },
-        query: { scope: "group", groupId },
-      },
-      res,
-    );
-
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({
-      error: "You are not a member of this group",
     });
   });
 });

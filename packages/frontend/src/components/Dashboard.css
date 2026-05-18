@@ -251,9 +251,7 @@ body {
 }
 
 .leaderboard-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  display: block;
 }
 
 .leaderboard-stat {
@@ -281,40 +279,11 @@ body {
   line-height: 1.1;
 }
 
-.leaderboard-tabs {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.leaderboard-tab {
-  border: 1.5px solid var(--border-color);
-  background: var(--bg);
-  color: var(--brand-black);
-  border-radius: 20px;
-  cursor: pointer;
-  font-family: "EB Garamond", serif;
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 8px 12px;
-  transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease;
-}
-
-.leaderboard-tab:hover,
-.leaderboard-tab.active {
-  background: var(--brand-black);
-  border-color: var(--brand-black);
-  color: var(--white);
-}
-
 .leaderboard-subtitle {
   color: var(--text-gray);
   font-size: 0.96rem;
   font-style: italic;
-  margin: -6px 0 0;
+  margin: 0;
   text-align: center;
 }
 

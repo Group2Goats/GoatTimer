@@ -11,18 +11,12 @@ function formatHours(hours) {
   }h`;
 }
 
-function Leaderboard({ groupId, limit = DEFAULT_LIMIT, user }) {
-  const [scope, setScope] = useState("global");
+function Leaderboard({ limit = DEFAULT_LIMIT, user }) {
   const [entries, setEntries] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
-  const isGroupUnavailable = scope === "group" && !groupId;
 
   useEffect(() => {
-    if (isGroupUnavailable) {
-      return;
-    }
-
     const controller = new AbortController();
 
     async function loadLeaderboard() {
@@ -30,13 +24,8 @@ function Leaderboard({ groupId, limit = DEFAULT_LIMIT, user }) {
       setError("");
 
       const params = new URLSearchParams({
-        scope,
         limit: String(limit),
       });
-
-      if (scope === "group") {
-        params.set("groupId", groupId);
-      }
 
       const res = await fetch(`/api/leaderboard?${params.toString()}`, {
         credentials: "include",
@@ -64,23 +53,12 @@ function Leaderboard({ groupId, limit = DEFAULT_LIMIT, user }) {
     });
 
     return () => controller.abort();
-  }, [groupId, isGroupUnavailable, limit, scope]);
+  }, [limit]);
 
-  const visibleEntries = isGroupUnavailable ? [] : entries;
-  const visibleStatus = isGroupUnavailable ? "idle" : status;
-  const hasEntries = visibleEntries.length > 0;
+  const hasEntries = entries.length > 0;
+  const emptyMessage = "No study time yet. Start a session to claim a spot.";
 
-  let emptyMessage = "No study time yet. Start a session to claim a spot.";
-
-  if (isGroupUnavailable) {
-    emptyMessage = "Create or join a group to see your group leaderboard.";
-  }
-
-  const stats = [
-    { label: "Today", value: formatHours(user?.todayHours) },
-    { label: "This week", value: formatHours(user?.weeklyHours) },
-    { label: "Total", value: formatHours(user?.totalHours) },
-  ];
+  const stats = [{ label: "All time", value: formatHours(user?.totalHours) }];
 
   return (
     <div className="leaderboard-card">
@@ -94,44 +72,24 @@ function Leaderboard({ groupId, limit = DEFAULT_LIMIT, user }) {
             </div>
           ))}
         </div>
-        <div className="leaderboard-tabs" aria-label="Leaderboard scope">
-          <button
-            className={`leaderboard-tab ${scope === "global" ? "active" : ""}`}
-            type="button"
-            aria-pressed={scope === "global"}
-            onClick={() => setScope("global")}
-          >
-            Global
-          </button>
-          <button
-            className={`leaderboard-tab ${scope === "group" ? "active" : ""}`}
-            type="button"
-            aria-pressed={scope === "group"}
-            onClick={() => setScope("group")}
-          >
-            Group
-          </button>
-        </div>
-        <p className="leaderboard-subtitle">
-          {scope === "global" ? "Top global users" : "Top group users"}
-        </p>
+        <p className="leaderboard-subtitle">Top global users</p>
       </div>
 
-      {visibleStatus === "loading" && (
+      {status === "loading" && (
         <p className="leaderboard-message">Loading leaderboard...</p>
       )}
 
-      {visibleStatus === "error" && (
+      {status === "error" && (
         <p className="leaderboard-message leaderboard-error">{error}</p>
       )}
 
-      {visibleStatus !== "loading" &&
-        visibleStatus !== "error" &&
-        !hasEntries && <p className="leaderboard-message">{emptyMessage}</p>}
+      {status !== "loading" && status !== "error" && !hasEntries && (
+        <p className="leaderboard-message">{emptyMessage}</p>
+      )}
 
-      {visibleStatus === "success" && hasEntries && (
+      {status === "success" && hasEntries && (
         <ul className="leaderboard-list">
-          {visibleEntries.map((entry) => (
+          {entries.map((entry) => (
             <li
               className={`leaderboard-item ${
                 entry.isCurrentUser ? "current-user" : ""
@@ -150,7 +108,7 @@ function Leaderboard({ groupId, limit = DEFAULT_LIMIT, user }) {
                 )}
               </span>
               <span className="player-score">
-                {formatHours(entry.weeklyHours)}
+                {formatHours(entry.totalHours)}
               </span>
             </li>
           ))}

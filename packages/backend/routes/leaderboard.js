@@ -1,7 +1,5 @@
 import express from "express";
-import mongoose from "mongoose";
 
-import Group from "../models/group.js";
 import User from "../models/user.js";
 import requireAuth from "../middleware/requireAuth.js";
 
@@ -32,19 +30,15 @@ export function mapUsersToLeaderboardEntries(users, currentUserId) {
       rank: index + 1,
       userId,
       name: user.name || user.email || "GoatTimer User",
-      weeklyHours: user.weeklyHours || 0,
+      totalHours: user.totalHours || 0,
       isCurrentUser: userId === currentUserId,
     };
   });
 }
 
-export function createLeaderboardHandler({
-  UserModel = User,
-  GroupModel = Group,
-} = {}) {
+export function createLeaderboardHandler({ UserModel = User } = {}) {
   return async function leaderboardHandler(req, res) {
     try {
-      const scope = req.query.scope === "group" ? "group" : "global";
       const limit = getLeaderboardLimit(req.query.limit);
       const currentUserId = req.auth?.userId;
 
@@ -52,59 +46,14 @@ export function createLeaderboardHandler({
         return res.status(401).json({ error: "Authentication required" });
       }
 
-      if (scope === "global") {
-        const users = await UserModel.find()
-          .sort({ weeklyHours: -1, name: 1 })
-          .limit(limit)
-          .select("name email weeklyHours")
-          .lean();
-
-        return res.json({
-          scope,
-          entries: mapUsersToLeaderboardEntries(users, currentUserId),
-        });
-      }
-
-      const groupId =
-        typeof req.query.groupId === "string" ? req.query.groupId : "";
-
-      if (!mongoose.Types.ObjectId.isValid(groupId)) {
-        return res.status(400).json({ error: "Valid groupId is required" });
-      }
-
-      const group = await GroupModel.findById(groupId)
-        .populate("users", "name email weeklyHours")
+      const users = await UserModel.find()
+        .sort({ totalHours: -1, name: 1 })
+        .limit(limit)
+        .select("name email totalHours")
         .lean();
 
-      if (!group) {
-        return res.status(404).json({ error: "Group not found" });
-      }
-
-      const memberIds = group.users.map((user) => getUserId(user));
-
-      if (!memberIds.includes(currentUserId)) {
-        return res
-          .status(403)
-          .json({ error: "You are not a member of this group" });
-      }
-
-      const users = [...group.users]
-        .sort((first, second) => {
-          const hoursDifference =
-            (second.weeklyHours || 0) - (first.weeklyHours || 0);
-
-          if (hoursDifference !== 0) {
-            return hoursDifference;
-          }
-
-          return (first.name || first.email || "").localeCompare(
-            second.name || second.email || "",
-          );
-        })
-        .slice(0, limit);
-
       return res.json({
-        scope,
+        scope: "global",
         entries: mapUsersToLeaderboardEntries(users, currentUserId),
       });
     } catch (error) {
