@@ -36,15 +36,15 @@ describe("Leaderboard", () => {
             {
               rank: 1,
               userId: "user-1",
-              name: "Afredo",
-              totalHours: 100,
+              name: "aras",
+              totalHours: 20,
               isCurrentUser: false,
             },
             {
               rank: 2,
               userId: "user-2",
-              name: "Adrian",
-              totalHours: 99.25,
+              name: "maastest",
+              totalHours: 1.001111111111111,
               isCurrentUser: true,
             },
           ],
@@ -58,15 +58,15 @@ describe("Leaderboard", () => {
     expect(screen.getByText("42.5h")).toBeInTheDocument();
     expect(screen.getByText(/all time/i)).toBeInTheDocument();
     expect(screen.getByText(/top global users/i)).toBeInTheDocument();
-    expect(await screen.findByText("Afredo")).toBeInTheDocument();
-    expect(screen.getByText("Adrian")).toBeInTheDocument();
-    expect(screen.getByText("99.3h")).toBeInTheDocument();
+    expect(await screen.findByText("aras")).toBeInTheDocument();
+    expect(screen.getByText("maastest")).toBeInTheDocument();
+    expect(screen.getByText("1h")).toBeInTheDocument();
     expect(screen.getByText("You")).toBeInTheDocument();
-    expect(screen.getByText("Adrian").closest("li")).toHaveClass(
+    expect(screen.getByText("maastest").closest("li")).toHaveClass(
       "current-user",
     );
     expect(fetch).toHaveBeenCalledWith(
-      "/api/leaderboard?limit=5",
+      "/api/users/leaderboard?limit=5",
       expect.objectContaining({ credentials: "include" }),
     );
   });
@@ -88,7 +88,7 @@ describe("Leaderboard", () => {
       await screen.findByText(/no study time yet/i),
     ).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledWith(
-      "/api/leaderboard?limit=5",
+      "/api/users/leaderboard?limit=5",
       expect.objectContaining({ credentials: "include" }),
     );
   });

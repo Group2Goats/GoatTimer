@@ -27,7 +27,7 @@ function Leaderboard({ limit = DEFAULT_LIMIT, user }) {
         limit: String(limit),
       });
 
-      const res = await fetch(`/api/leaderboard?${params.toString()}`, {
+      const res = await fetch(`/api/users/leaderboard?${params.toString()}`, {
         credentials: "include",
         signal: controller.signal,
       });

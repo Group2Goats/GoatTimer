@@ -10,6 +10,7 @@ const backendRoot = path.resolve(
 dotenv.config({ path: path.join(backendRoot, ".env"), quiet: true });
 
 export const MONGO_URI = process.env.MONGO_URI;
+export const MONGO_DB_NAME = process.env.MONGO_DB_NAME;
 export const JWT_SECRET = process.env.JWT_SECRET;
 export const PORT = process.env.PORT || 5050;
 export const IS_PRODUCTION = process.env.NODE_ENV === "production";

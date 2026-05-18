@@ -24,8 +24,8 @@ function createUserQuery(users) {
 describe("leaderboard route handler", () => {
   it("returns global users ranked by total hours", async () => {
     const userQuery = createUserQuery([
-      { _id: "user-1", name: "Afredo", totalHours: 100 },
-      { _id: "user-2", name: "Adrian", totalHours: 99 },
+      { _id: "user-1", name: "aras", totalHours: 20 },
+      { _id: "user-2", name: "maastest", totalHours: 1.001111111111111 },
     ]);
     const UserModel = {
       find: vi.fn(() => userQuery),
@@ -51,15 +51,15 @@ describe("leaderboard route handler", () => {
         {
           rank: 1,
           userId: "user-1",
-          name: "Afredo",
-          totalHours: 100,
+          name: "aras",
+          totalHours: 20,
           isCurrentUser: false,
         },
         {
           rank: 2,
           userId: "user-2",
-          name: "Adrian",
-          totalHours: 99,
+          name: "maastest",
+          totalHours: 1.001111111111111,
           isCurrentUser: true,
         },
       ],
@@ -68,8 +68,8 @@ describe("leaderboard route handler", () => {
 
   it("fetches across all users even if a group scope is requested", async () => {
     const userQuery = createUserQuery([
-      { _id: "user-1", name: "Afredo", totalHours: 14 },
-      { _id: "user-2", name: "Adrian", totalHours: 12 },
+      { _id: "user-1", name: "aras", totalHours: 20 },
+      { _id: "user-2", name: "maastest", totalHours: 1.001111111111111 },
     ]);
     const UserModel = {
       find: vi.fn(() => userQuery),
@@ -97,15 +97,15 @@ describe("leaderboard route handler", () => {
         {
           rank: 1,
           userId: "user-1",
-          name: "Afredo",
-          totalHours: 14,
+          name: "aras",
+          totalHours: 20,
           isCurrentUser: false,
         },
         {
           rank: 2,
           userId: "user-2",
-          name: "Adrian",
-          totalHours: 12,
+          name: "maastest",
+          totalHours: 1.001111111111111,
           isCurrentUser: true,
         },
       ],
