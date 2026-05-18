@@ -21,7 +21,7 @@ export function getLeaderboardLimit(rawLimit) {
 }
 
 function getUserId(user) {
-  return user?._id?.toString?.() || String(user?._id || "");
+  return user?._id?.toString?.() || user?.toString?.() || String(user || "");
 }
 
 export function mapUsersToLeaderboardEntries(users, currentUserId) {
