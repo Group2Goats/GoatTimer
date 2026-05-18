@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import "./Signup.css";
 
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
+
 function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +22,7 @@ function Signup() {
     }
 
     try {
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch(`${AZURE_URL}/api/auth/signup`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
