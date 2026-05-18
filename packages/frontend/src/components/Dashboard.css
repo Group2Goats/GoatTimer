@@ -250,6 +250,37 @@ body {
   font-size: 1.1rem;
 }
 
+.leaderboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.leaderboard-stat {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.leaderboard-stat-value {
+  color: var(--brand-black);
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.leaderboard-stat-label {
+  color: var(--text-gray);
+  font-size: 0.78rem;
+  line-height: 1.1;
+}
+
 .leaderboard-tabs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -277,6 +308,14 @@ body {
   background: var(--brand-black);
   border-color: var(--brand-black);
   color: var(--white);
+}
+
+.leaderboard-subtitle {
+  color: var(--text-gray);
+  font-size: 0.96rem;
+  font-style: italic;
+  margin: -6px 0 0;
+  text-align: center;
 }
 
 .leaderboard-message {
