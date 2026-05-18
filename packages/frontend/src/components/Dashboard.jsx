@@ -134,7 +134,7 @@ const Dashboard = () => {
         </main>
 
         <aside className="dashboard-sidebar">
-          <Leaderboard groupId={groupId} />
+          <Leaderboard groupId={groupId} user={user} />
         </aside>
       </div>
     </div>

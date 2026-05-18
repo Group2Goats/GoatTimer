@@ -11,7 +11,7 @@ function formatHours(hours) {
   }h`;
 }
 
-function Leaderboard({ groupId, limit = DEFAULT_LIMIT }) {
+function Leaderboard({ groupId, limit = DEFAULT_LIMIT, user }) {
   const [scope, setScope] = useState("global");
   const [entries, setEntries] = useState([]);
   const [status, setStatus] = useState("loading");
@@ -76,10 +76,24 @@ function Leaderboard({ groupId, limit = DEFAULT_LIMIT }) {
     emptyMessage = "Create or join a group to see your group leaderboard.";
   }
 
+  const stats = [
+    { label: "Today", value: formatHours(user?.todayHours) },
+    { label: "This week", value: formatHours(user?.weeklyHours) },
+    { label: "Total", value: formatHours(user?.totalHours) },
+  ];
+
   return (
     <div className="leaderboard-card">
       <div className="leaderboard-header">
-        <h3 className="leaderboard-title">Top this week</h3>
+        <h3 className="leaderboard-title">Leaderboard</h3>
+        <div className="leaderboard-stats" aria-label="Your study statistics">
+          {stats.map((stat) => (
+            <div className="leaderboard-stat" key={stat.label}>
+              <span className="leaderboard-stat-value">{stat.value}</span>
+              <span className="leaderboard-stat-label">{stat.label}</span>
+            </div>
+          ))}
+        </div>
         <div className="leaderboard-tabs" aria-label="Leaderboard scope">
           <button
             className={`leaderboard-tab ${scope === "global" ? "active" : ""}`}
@@ -98,6 +112,9 @@ function Leaderboard({ groupId, limit = DEFAULT_LIMIT }) {
             Group
           </button>
         </div>
+        <p className="leaderboard-subtitle">
+          {scope === "global" ? "Top global users" : "Top group users"}
+        </p>
       </div>
 
       {visibleStatus === "loading" && (
