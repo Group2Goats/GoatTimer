@@ -4,7 +4,6 @@ import { useLocation } from "react-router";
 import styles from "./Navbar.module.css";
 
 function Navbar() {
-  const [route, setRoute] = useState("/signup");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
 
@@ -16,12 +15,10 @@ function Navbar() {
         const res = await fetch("/api/auth/me", { credentials: "include" });
 
         if (isCurrent) {
-          setRoute(res.ok ? "/dashboard" : "/signup");
           setIsLoggedIn(res.ok);
         }
       } catch {
         if (isCurrent) {
-          setRoute("/signup");
           setIsLoggedIn(false);
         }
       }
@@ -37,54 +34,40 @@ function Navbar() {
   return (
     <NavigationMenu.Root className={styles.NavRoot}>
       <NavigationMenu.List className={styles.NavList}>
-        {isLoggedIn && (
-          <NavigationMenu.Item>
-            <NavigationMenu.Trigger className={styles.NavTrigger}>
+        {isLoggedIn ? (
+          <>
+            <NavigationMenu.Item>
               <NavigationMenu.Link className={styles.NavLink} href="/dashboard">
                 Dashboard
               </NavigationMenu.Link>
-            </NavigationMenu.Trigger>
-            <NavigationMenu.Content className={styles.NavContent}>
-              <div className={styles.DropdownCard}>Back to your dashboard.</div>
-            </NavigationMenu.Content>
-          </NavigationMenu.Item>
+            </NavigationMenu.Item>
+
+            <NavigationMenu.Item>
+              <NavigationMenu.Link className={styles.NavLink} href="/profile">
+                Profile
+              </NavigationMenu.Link>
+            </NavigationMenu.Item>
+          </>
+        ) : (
+          <>
+            <NavigationMenu.Item>
+              <NavigationMenu.Link className={styles.NavLink} href="/signup">
+                Sign Up
+              </NavigationMenu.Link>
+            </NavigationMenu.Item>
+
+            <NavigationMenu.Item>
+              <NavigationMenu.Link className={styles.NavLink} href="/login">
+                Sign In
+              </NavigationMenu.Link>
+            </NavigationMenu.Item>
+          </>
         )}
 
         <NavigationMenu.Item>
-          <NavigationMenu.Trigger className={styles.NavTrigger}>
-            <NavigationMenu.Link className={styles.NavLink} href={route}>
-              Sign Up
-            </NavigationMenu.Link>
-          </NavigationMenu.Trigger>
-          <NavigationMenu.Content className={styles.NavContent}>
-            <div className={styles.DropdownCard}>
-              Distraction free study sessions.
-            </div>
-          </NavigationMenu.Content>
-        </NavigationMenu.Item>
-
-        <NavigationMenu.Item>
-          <NavigationMenu.Trigger className={styles.NavTrigger}>
-            <NavigationMenu.Link className={styles.NavLink} href="/login">
-              Sign In
-            </NavigationMenu.Link>
-          </NavigationMenu.Trigger>
-          <NavigationMenu.Content className={styles.NavContent}>
-            <div className={styles.DropdownCard}>
-              Track goals and finish what you planned.
-            </div>
-          </NavigationMenu.Content>
-        </NavigationMenu.Item>
-
-        <NavigationMenu.Item>
-          <NavigationMenu.Trigger className={styles.NavTrigger}>
-            <NavigationMenu.Link className={styles.NavLink} href="/about">
-              About
-            </NavigationMenu.Link>
-          </NavigationMenu.Trigger>
-          <NavigationMenu.Content className={styles.NavContent}>
-            <div className={styles.DropdownCard}>Learn More!</div>
-          </NavigationMenu.Content>
+          <NavigationMenu.Link className={styles.NavLink} href="/about">
+            About
+          </NavigationMenu.Link>
         </NavigationMenu.Item>
       </NavigationMenu.List>
 

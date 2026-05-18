@@ -102,6 +102,37 @@ router.patch("/me/commitment", requireAuth, async (req, res) => {
   }
 });
 
+//update study time after a session
+router.patch("/:userParam/study-time", async (req, res) => {
+  try {
+    const { hours } = req.body;
+
+    if (typeof hours !== "number" || hours <= 0) {
+      return res.status(400).json({ error: "hours must be a positive number" });
+    }
+
+    const user = await User.findOneAndUpdate(
+      getUserFilter(req.params.userParam),
+      {
+        $inc: {
+          totalHours: hours,
+          weeklyHours: hours,
+          todayHours: hours,
+        },
+      },
+      { new: true, runValidators: true },
+    ).populate("groups");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json(user);
+  } catch (error) {
+    return sendError(res, error, 400);
+  }
+});
+
 //get all users
 router.get("/", async (req, res) => {
   try {
