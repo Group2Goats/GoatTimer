@@ -143,16 +143,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// REDUNDANT WITH POST /api/auth/signup BECAUSE SIGNUP ALREADY CREATES USERS, HASHES PASSWORDS, AND SETS THE JWT COOKIE.
-// router.post("/", async (req, res) => {
-//   try {
-//     const user = await User.create(req.body);
-//     res.status(201).json(user);
-//   } catch (error) {
-//     sendError(res, error, 400);
-//   }
-// });
-
 //get all groups for one user
 router.get("/:userParam/groups", async (req, res) => {
   try {

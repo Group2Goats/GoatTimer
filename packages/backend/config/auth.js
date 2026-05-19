@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { IS_PRODUCTION, JWT_SECRET } from "./env.js";
+import { JWT_SECRET } from "./env.js";
 
 export const AUTH_COOKIE_NAME = "goattimer_jwt";
 
