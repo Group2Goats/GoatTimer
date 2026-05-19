@@ -3,6 +3,9 @@ import styles from "./Timer.module.css";
 import MouseLock from "./MouseLock.jsx";
 import { useNavigate } from "react-router";
 
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
+
 const MAX_TIME = 1500; // 25 minutes in seconds
 
 function formatTime(seconds) {
@@ -63,7 +66,7 @@ function Timer() {
         const userId = localStorage.getItem("userId");
         if (!userId) return;
 
-        await fetch(`/api/users/${userId}/study-time`, {
+        await fetch(`${AZURE_URL}/api/users/${userId}/study-time`, {
           method: "PATCH",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
