@@ -8,6 +8,7 @@ import { PORT, IS_PRODUCTION } from "./config/env.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import groupRoutes from "./routes/groups.js";
+import { startResetJobs } from "./jobs/resetHours.js";
 
 dotenv.config();
 
@@ -62,6 +63,8 @@ connectDB()
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
+    // kick off daily/weekly hour resets (utc)
+    startResetJobs();
   })
   .catch((error) => {
     console.error("Database connection failed:", error.message);
