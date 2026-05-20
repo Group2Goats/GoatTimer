@@ -60,11 +60,6 @@ router.post("/signup", async (req, res) => {
 
     const token = createAuthToken(user);
     res.cookie(AUTH_COOKIE_NAME, token, authCookieOptions);
-    console.log(`✅ [SIGNUP] Cookie set for ${email}:`, {
-      name: AUTH_COOKIE_NAME,
-      options: authCookieOptions,
-      tokenLength: token.length,
-    });
     res.status(201).json({ user });
   } catch (error) {
     if (isDuplicateEmailError(error)) {
@@ -95,11 +90,6 @@ router.post("/login", async (req, res) => {
 
     const token = createAuthToken(user);
     res.cookie(AUTH_COOKIE_NAME, token, authCookieOptions);
-    console.log(`✅ [LOGIN] Cookie set for ${email}:`, {
-      name: AUTH_COOKIE_NAME,
-      options: authCookieOptions,
-      tokenLength: token.length,
-    });
     res.json({ user });
   } catch (error) {
     res.status(400).json({ error: error.message });
