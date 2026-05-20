@@ -11,7 +11,12 @@ function formatHours(hours) {
   }h`;
 }
 
-function Leaderboard({ limit = DEFAULT_LIMIT, user, groupId, scope = "global" }) {
+function Leaderboard({ 
+  limit = DEFAULT_LIMIT, 
+  user, 
+  groupId, 
+  scope = "global", 
+}) {
   const [entries, setEntries] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
@@ -62,9 +67,7 @@ function Leaderboard({ limit = DEFAULT_LIMIT, user, groupId, scope = "global" })
 
   const hasEntries = entries.length > 0;
   const emptyMessage = "No study time yet. Start a session to claim a spot.";
-  const subtitle =
-    scope === "group" ? "Top group members" : "Top global users";
-
+  const subtitle = scope === "group" ? "Top group members" : "Top global users";
   const stats = [{ label: "All time", value: formatHours(user?.totalHours) }];
 
   return (
