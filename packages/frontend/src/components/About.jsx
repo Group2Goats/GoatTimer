@@ -30,6 +30,11 @@ function About() {
           <strong>Progress Analytics:</strong> Visualize your study habits with
           detailed statistics and insights.
         </li>
+        <li className={styles.aboutItem}>
+          <strong>Become a G.O.A.T.:</strong> Reveal your inner greatness and
+          strive to be the Greatest Of All Time in your academic, work, or
+          personal pursuits.
+        </li>
       </ul>
       <hr></hr>
       <p>

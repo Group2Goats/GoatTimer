@@ -11,6 +11,8 @@ import Dashboard from "./components/Dashboard.jsx";
 import About from "./components/About.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
 import Profile from "./components/Profile.jsx";
+import CreateGroup from "./components/CreateGroup.jsx";
+import GroupDetail from "./components/GroupDetail.jsx";
 
 const root = document.getElementById("root");
 
@@ -43,6 +45,22 @@ ReactDOM.createRoot(root).render(
         element={
           <RequireAuth>
             <Profile />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/create-group"
+        element={
+          <RequireAuth>
+            <CreateGroup />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/groups/:groupId"
+        element={
+          <RequireAuth>
+            <GroupDetail />
           </RequireAuth>
         }
       />

@@ -1,0 +1,198 @@
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import "./GroupDetail.css";
+
+function GroupDetail() {
+  const { groupId } = useParams();
+  const navigate = useNavigate();
+
+  const [group, setGroup] = useState(null);
+  const [user, setUser] = useState(null);
+  const [name, setName] = useState("");
+  const [editingName, setEditingName] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((res) => {
+        if (!res.ok) throw new Error("Not logged in");
+        return res.json();
+      })
+      .then((data) => setUser(data.user))
+      .catch(() => navigate("/login"));
+  }, [navigate]);
+
+  useEffect(() => {
+    fetch(`/api/groups/${groupId}`, { credentials: "include" })
+      .then((res) => {
+        if (!res.ok) throw new Error("Group not found");
+        return res.json();
+      })
+      .then((data) => {
+        setGroup(data);
+        setName(data.name || "");
+      })
+      .catch((err) => setError(err.message));
+  }, [groupId]);
+
+  function handleSaveName() {
+    setError("");
+    setMessage("");
+
+    fetch(`/api/groups/${groupId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ name }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to update group name");
+        return res.json();
+      })
+      .then((data) => {
+        setGroup(data);
+        setEditingName(false);
+        setMessage("Group name updated.");
+      })
+      .catch((err) => setError(err.message));
+  }
+
+  function handleKick(userId) {
+    if (!isOwner) return;
+
+    const confirmed = window.confirm("Remove this member from the group?");
+    if (!confirmed) return;
+
+    setError("");
+    setMessage("");
+
+    fetch(`/api/groups/${groupId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ removeUsers: [userId] }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to remove member");
+        return res.json();
+      })
+      .then((data) => {
+        setGroup(data);
+        setMessage("Member removed.");
+      })
+      .catch((err) => setError(err.message));
+  }
+
+  function copyGroupId() {
+    navigator.clipboard.writeText(groupId);
+    setMessage("Group ID copied to clipboard!");
+  }
+
+  if (!group || !user) {
+    return (
+      <div className="groupDetailPage">
+        <p className="groupDetailMessage">
+          {error ? `Error: ${error}` : "Loading..."}
+        </p>
+      </div>
+    );
+  }
+
+  const isOwner = group.owner?._id === user._id;
+
+  return (
+    <div className="groupDetailPage">
+      <div className="groupDetailContainer">
+        <div className="groupDetailCard">
+          <div className="groupNameRow">
+            {editingName ? (
+              <>
+                <input
+                  className="groupNameInput"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <button className="groupSaveBtn" onClick={handleSaveName}>
+                  Save
+                </button>
+                <button
+                  className="groupCancelBtn"
+                  onClick={() => {
+                    setName(group.name || "");
+                    setEditingName(false);
+                  }}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <h1 className="groupName">{group.name || "Untitled Group"}</h1>
+                {isOwner && (
+                  <button
+                    className="groupEditBtn"
+                    onClick={() => setEditingName(true)}
+                  >
+                    Edit
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          <div className="groupIdSection">
+            <label className="groupSectionLabel">Group ID:</label>
+            <div className="groupIdRow">
+              <span className="groupIdValue">{group._id}</span>
+              <button className="copyBtn" onClick={copyGroupId}>
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div className="groupMembersSection">
+            <h2 className="groupSectionHeading">Members</h2>
+            <ul className="groupMemberList">
+              {group.users.map((member) => {
+                const isLeader = member._id === group.owner?._id;
+                const isSelf = member._id === user._id;
+                return (
+                  <li key={member._id} className="groupMemberItem">
+                    <span className="groupMemberName">
+                      {member.name || member.email}
+                    </span>
+                    {isLeader && <span className="leaderBadge">Leader</span>}
+                    {isOwner && !isLeader && (
+                      <button
+                        className="kickBtn"
+                        onClick={() => handleKick(member._id)}
+                      >
+                        Kick
+                      </button>
+                    )}
+                    {isSelf && !isLeader && (
+                      <span className="selfBadge">You</span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {message && <p className="groupDetailMessage">{message}</p>}
+          {error && <p className="groupDetailError">{error}</p>}
+
+          <button
+            className="groupBackBtn"
+            onClick={() => navigate("/dashboard")}
+          >
+            Back to Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default GroupDetail;

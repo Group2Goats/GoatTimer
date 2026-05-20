@@ -82,7 +82,7 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true,
+      required: [true, "password is required"],
       select: false,
     },
 
@@ -164,13 +164,11 @@ userSchema.pre("save", async function hashPassword() {
 });
 
 userSchema.methods.comparePassword = async function comparePassword(password) {
-  if (!password || !this.password) return false;
-
-  if (isPasswordHash(this.password)) {
-    return bcrypt.compare(password, this.password);
+  if (!password || !this.password) {
+    return false;
   }
 
-  return this.password === password;
+  return bcrypt.compare(password, this.password);
 };
 
 userSchema.statics.hashPassword = function hashPassword(password) {

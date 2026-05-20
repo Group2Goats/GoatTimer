@@ -1,0 +1,210 @@
+.createGroupPage {
+  min-height: calc(100vh - 86px);
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 20px 48px;
+}
+
+.createGroupContainer {
+  width: min(600px, 92vw);
+  text-align: center;
+}
+
+.createGroupTitle {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: var(--brand-black);
+  margin: 0 0 8px;
+}
+
+.createGroupSubtitle {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+  color: #555;
+  margin: 0 0 32px;
+}
+
+.createGroupCard {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(0, 8, 7, 0.28);
+  border-radius: 16px;
+  padding: 28px 30px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.createGroupHeading {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--brand-black);
+  margin: 0 0 16px;
+}
+
+.createGroupBtn {
+  background: var(--brand-black);
+  color: var(--white);
+  border: none;
+  border-radius: 999px;
+  padding: 12px 32px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.18s ease;
+}
+
+.createGroupBtn:hover {
+  opacity: 0.85;
+}
+
+.groupIdDisplay {
+  margin-top: 18px;
+}
+
+.groupIdLabel {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--brand-black);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.groupIdRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.groupIdValue {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(0, 8, 7, 0.16);
+  background: rgba(255, 255, 255, 0.42);
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #555;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copyBtn {
+  background: var(--accent-purple, #9b9ece);
+  color: var(--brand-black);
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.18s ease;
+}
+
+.copyBtn:hover {
+  opacity: 0.8;
+}
+
+.joinRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.joinInput {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(0, 8, 7, 0.16);
+  background: rgba(255, 255, 255, 0.42);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  color: var(--brand-black);
+  outline: none;
+}
+
+.joinInput::placeholder {
+  color: #aaa;
+}
+
+.joinInput:focus {
+  border-color: var(--accent-purple, #9b9ece);
+}
+
+.joinBtn {
+  background: var(--brand-black);
+  color: var(--white);
+  border: none;
+  border-radius: 999px;
+  padding: 12px 28px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.18s ease;
+}
+
+.joinBtn:hover {
+  opacity: 0.85;
+}
+
+.createGroupMessage {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  color: #2e7d32;
+  margin: 16px 0;
+}
+
+.createGroupError {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  color: #c62828;
+  margin: 16px 0;
+}
+
+.createGroupBack {
+  background: none;
+  border: 1.5px solid var(--brand-black);
+  color: var(--brand-black);
+  border-radius: 999px;
+  padding: 10px 28px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.18s ease;
+}
+
+.createGroupBack:hover {
+  background: var(--brand-black);
+  color: var(--white);
+}
+
+@media (max-width: 600px) {
+  .createGroupContainer {
+    width: 100%;
+  }
+
+  .createGroupCard {
+    padding: 22px 18px;
+  }
+
+  .joinRow,
+  .groupIdRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .groupIdValue {
+    font-size: 0.8rem;
+  }
+}
