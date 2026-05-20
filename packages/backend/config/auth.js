@@ -11,6 +11,7 @@ export const authCookieOptions = {
   sameSite: "none",
   secure: true,
   path: "/",
+  partitioned: true,
   maxAge: ONE_WEEK_IN_MS,
 };
 
@@ -18,6 +19,7 @@ export const clearAuthCookieOptions = {
   httpOnly: authCookieOptions.httpOnly,
   sameSite: authCookieOptions.sameSite,
   secure: authCookieOptions.secure,
+  partitioned: authCookieOptions.partitioned,
   path: authCookieOptions.path,
 };
 
