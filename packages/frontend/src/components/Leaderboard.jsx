@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
 const DEFAULT_LIMIT = 5;
 
 function formatHours(hours) {
@@ -37,10 +39,13 @@ function Leaderboard({
         params.append("groupId", groupId);
       }
 
-      const res = await fetch(`/api/users/leaderboard?${params.toString()}`, {
-        credentials: "include",
-        signal: controller.signal,
-      });
+      const res = await fetch(
+        `${AZURE_URL}/api/users/leaderboard?${params.toString()}`,
+        {
+          credentials: "include",
+          signal: controller.signal,
+        },
+      );
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
