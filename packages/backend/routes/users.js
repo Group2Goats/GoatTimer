@@ -115,7 +115,7 @@ router.patch("/:userParam/study-time", async (req, res) => {
     const user = await User.findOneAndUpdate(
       getUserFilter(req.params.userParam),
       {
-        : {
+        $inc: {
           totalHours: hours,
           weeklyHours: hours,
           todayHours: hours,
