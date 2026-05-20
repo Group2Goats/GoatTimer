@@ -1,6 +1,8 @@
 import express from "express";
+import mongoose from "mongoose";
 
 import User from "../models/user.js";
+import Group from "../models/group.js";
 import requireAuth from "../middleware/requireAuth.js";
 
 const DEFAULT_LIMIT = 5;
@@ -36,24 +38,51 @@ export function mapUsersToLeaderboardEntries(users, currentUserId) {
   });
 }
 
-export function createLeaderboardHandler({ UserModel = User } = {}) {
+export function createLeaderboardHandler({ UserModel = User, GroupModel = Group } = {}) {
   return async function leaderboardHandler(req, res) {
     try {
       const limit = getLeaderboardLimit(req.query.limit);
+      const scope = req.query.scope || "global";
+      const groupId = req.query.groupId;
       const currentUserId = req.auth?.userId;
 
       if (!currentUserId) {
         return res.status(401).json({ error: "Authentication required" });
       }
 
-      const users = await UserModel.find()
-        .sort({ totalHours: -1, name: 1 })
-        .limit(limit)
-        .select("name email totalHours")
-        .lean();
+      let users;
+
+      if (scope === "group" && groupId) {
+        // Validate groupId format
+        if (!mongoose.Types.ObjectId.isValid(groupId)) {
+          return res.status(400).json({ error: "Invalid group ID" });
+        }
+
+        // Fetch the group and get its users
+        const group = await GroupModel.findById(groupId)
+          .populate({
+            path: "users",
+            select: "name email totalHours",
+            options: { sort: { totalHours: -1, name: 1 }, limit },
+          })
+          .lean();
+
+        if (!group) {
+          return res.status(404).json({ error: "Group not found" });
+        }
+
+        users = group.users || [];
+      } else {
+        // Global leaderboard
+        users = await UserModel.find()
+          .sort({ totalHours: -1, name: 1 })
+          .limit(limit)
+          .select("name email totalHours")
+          .lean();
+      }
 
       return res.json({
-        scope: "global",
+        scope,
         entries: mapUsersToLeaderboardEntries(users, currentUserId),
       });
     } catch (error) {

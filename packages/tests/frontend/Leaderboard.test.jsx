@@ -66,7 +66,7 @@ describe("Leaderboard", () => {
       "current-user",
     );
     expect(fetch).toHaveBeenCalledWith(
-      "/api/users/leaderboard?limit=5",
+      "/api/users/leaderboard?limit=5&scope=global",
       expect.objectContaining({ credentials: "include" }),
     );
   });
@@ -88,7 +88,7 @@ describe("Leaderboard", () => {
       await screen.findByText(/no study time yet/i),
     ).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledWith(
-      "/api/users/leaderboard?limit=5",
+      "/api/users/leaderboard?limit=5&scope=global",
       expect.objectContaining({ credentials: "include" }),
     );
   });

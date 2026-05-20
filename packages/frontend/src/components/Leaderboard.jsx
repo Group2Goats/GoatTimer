@@ -11,7 +11,7 @@ function formatHours(hours) {
   }h`;
 }
 
-function Leaderboard({ limit = DEFAULT_LIMIT, user }) {
+function Leaderboard({ limit = DEFAULT_LIMIT, user, groupId, scope = "global" }) {
   const [entries, setEntries] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
@@ -25,7 +25,12 @@ function Leaderboard({ limit = DEFAULT_LIMIT, user }) {
 
       const params = new URLSearchParams({
         limit: String(limit),
+        scope,
       });
+
+      if (scope === "group" && groupId) {
+        params.append("groupId", groupId);
+      }
 
       const res = await fetch(`/api/users/leaderboard?${params.toString()}`, {
         credentials: "include",
@@ -53,10 +58,12 @@ function Leaderboard({ limit = DEFAULT_LIMIT, user }) {
     });
 
     return () => controller.abort();
-  }, [limit]);
+  }, [limit, scope, groupId]);
 
   const hasEntries = entries.length > 0;
   const emptyMessage = "No study time yet. Start a session to claim a spot.";
+  const subtitle =
+    scope === "group" ? "Top group members" : "Top global users";
 
   const stats = [{ label: "All time", value: formatHours(user?.totalHours) }];
 
@@ -72,7 +79,7 @@ function Leaderboard({ limit = DEFAULT_LIMIT, user }) {
             </div>
           ))}
         </div>
-        <p className="leaderboard-subtitle">Top global users</p>
+        <p className="leaderboard-subtitle">{subtitle}</p>
       </div>
 
       {status === "loading" && (

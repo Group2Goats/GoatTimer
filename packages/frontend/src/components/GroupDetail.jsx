@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
+import Leaderboard from "./Leaderboard";
 import "./GroupDetail.css";
 
 const AZURE_URL =
@@ -182,6 +183,8 @@ function GroupDetail() {
               })}
             </ul>
           </div>
+
+          <Leaderboard groupId={groupId} scope="group" user={user} limit={5} />
 
           {message && <p className="groupDetailMessage">{message}</p>}
           {error && <p className="groupDetailError">{error}</p>}
