@@ -11,11 +11,11 @@ function formatHours(hours) {
   }h`;
 }
 
-function Leaderboard({ 
-  limit = DEFAULT_LIMIT, 
-  user, 
-  groupId, 
-  scope = "global", 
+function Leaderboard({
+  limit = DEFAULT_LIMIT,
+  user,
+  groupId,
+  scope = "global",
 }) {
   const [entries, setEntries] = useState([]);
   const [status, setStatus] = useState("loading");
