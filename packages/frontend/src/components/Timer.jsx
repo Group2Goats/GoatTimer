@@ -2,14 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Timer.module.css";
 import MouseLock from "./MouseLock.jsx";
 
-/* const STUDY_TIME = 1500;
+const STUDY_TIME = 1500;
 const SHORT_BREAK_TIME = 300;
-const LONG_BREAK_TIME = 1800; */
+const LONG_BREAK_TIME = 1800;
 
-// For testing:
-const STUDY_TIME = 25;
-const SHORT_BREAK_TIME = 5;
-const LONG_BREAK_TIME = 30;
 const AZURE_URL =
   "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
 
