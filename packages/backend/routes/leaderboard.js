@@ -38,7 +38,10 @@ export function mapUsersToLeaderboardEntries(users, currentUserId) {
   });
 }
 
-export function createLeaderboardHandler({ UserModel = User, GroupModel = Group } = {}) {
+export function createLeaderboardHandler({
+  UserModel = User,
+  GroupModel = Group,
+} = {}) {
   return async function leaderboardHandler(req, res) {
     try {
       const limit = getLeaderboardLimit(req.query.limit);
