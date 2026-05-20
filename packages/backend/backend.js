@@ -9,7 +9,6 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import groupRoutes from "./routes/groups.js";
 import { startResetJobs } from "./jobs/resetHours.js";
-import leaderboardRoutes from "./routes/leaderboard.js";
 
 dotenv.config();
 
@@ -55,9 +54,6 @@ app.use("/api/users", userRoutes);
 
 //group routes
 app.use("/api/groups", groupRoutes);
-
-//leaderboard routes
-app.use("/api/leaderboard", leaderboardRoutes);
 
 //connect and start server
 connectDB()
