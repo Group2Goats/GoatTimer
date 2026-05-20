@@ -56,10 +56,13 @@ body {
 /*dashboard*/
 .home-container {
   display: grid;
-  grid-template-columns: 1fr 320px; /*set width*/
-  gap: 50px;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 40px;
   margin: 0;
-  padding: 50px 50px;
+  padding: 24px clamp(16px, 4vw, 50px) 50px;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: start;
 }
 
 /*left col: main*/
@@ -67,12 +70,13 @@ body {
   text-align: left !important;
   display: flex;
   flex-direction: column;
-  align-items: stretch; /*cards stretch whole page*/
+  align-items: stretch;
   justify-content: flex-start;
+  min-width: 0;
 }
 
 .dashboard-header {
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   text-align: left !important;
 }
 
@@ -81,7 +85,8 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
 .profile-btn {
@@ -133,11 +138,12 @@ body {
 }
 
 .greeting-text {
-  font-size: 3.5rem;
+  font-size: clamp(2rem, 5vw, 3.5rem);
   font-style: italic;
   font-weight: 700;
   margin: 0;
   letter-spacing: -1px;
+  word-break: break-word;
 }
 
 /*progress card*/
@@ -145,7 +151,7 @@ body {
   background: var(--bg);
   border: 1px solid var(--border-color);
   border-radius: 30px;
-  padding: 30px 40px;
+  padding: clamp(20px, 3vw, 30px) clamp(20px, 4vw, 40px);
   margin-bottom: 40px;
 }
 
@@ -155,6 +161,8 @@ body {
   align-items: center;
   margin-bottom: 15px;
   font-size: 1.1rem;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .progress-hours strong {
@@ -289,4 +297,40 @@ body {
 
 .player-score {
   font-weight: bold;
+}
+
+/* responsive: stack sidebar under main on narrow screens */
+@media (max-width: 960px) {
+  .home-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 24px 20px 40px;
+  }
+
+  .dashboard-sidebar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-container {
+    padding: 20px 14px 32px;
+    gap: 24px;
+  }
+
+  .dashboard-header {
+    margin-bottom: 24px;
+  }
+
+  .current-date {
+    font-size: 1.2rem;
+  }
+
+  .timer-display {
+    font-size: clamp(3.5rem, 14vw, 6rem);
+  }
+
+  .leaderboard-card {
+    padding: 22px 18px;
+  }
 }
