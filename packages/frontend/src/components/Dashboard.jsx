@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router";
 import "./Dashboard.css";
 import Timer from "./Timer";
 
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -10,7 +13,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/auth/me", { credentials: "include" })
+    fetch(`${AZURE_URL}/api/auth/me`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Not logged in");
         return res.json();
@@ -33,7 +36,7 @@ const Dashboard = () => {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (!confirmed) return;
 
-    fetch("/api/auth/logout", {
+    fetch(`${AZURE_URL}/api/auth/logout`, {
       method: "POST",
       credentials: "include",
     }).then(() => {

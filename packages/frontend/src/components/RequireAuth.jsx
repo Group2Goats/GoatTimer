@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router";
 
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
+
 function RequireAuth({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const location = useLocation();
@@ -10,7 +13,9 @@ function RequireAuth({ children }) {
 
     async function checkSession() {
       try {
-        const res = await fetch("/api/auth/me", { credentials: "include" });
+        const res = await fetch(`${AZURE_URL}/api/auth/me`, {
+          credentials: "include",
+        });
 
         if (isCurrent) {
           setIsAuthenticated(res.ok);

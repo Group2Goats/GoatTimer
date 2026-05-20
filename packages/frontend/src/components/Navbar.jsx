@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import styles from "./Navbar.module.css";
 
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
+
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
@@ -12,7 +15,9 @@ function Navbar() {
 
     async function checkSession() {
       try {
-        const res = await fetch("/api/auth/me", { credentials: "include" });
+        const res = await fetch(`${AZURE_URL}/api/auth/me`, {
+          credentials: "include",
+        });
 
         if (isCurrent) {
           setIsLoggedIn(res.ok);

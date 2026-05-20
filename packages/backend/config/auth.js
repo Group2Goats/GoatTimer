@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { IS_PRODUCTION, JWT_SECRET } from "./env.js";
+import { JWT_SECRET } from "./env.js";
 
 export const AUTH_COOKIE_NAME = "goattimer_jwt";
 
@@ -8,8 +8,8 @@ const ONE_WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 
 export const authCookieOptions = {
   httpOnly: true,
-  sameSite: "lax",
-  secure: IS_PRODUCTION,
+  sameSite: "none",
+  secure: true,
   path: "/",
   maxAge: ONE_WEEK_IN_MS,
 };

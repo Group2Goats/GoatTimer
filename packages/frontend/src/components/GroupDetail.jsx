@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import "./GroupDetail.css";
 
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
+
 function GroupDetail() {
   const { groupId } = useParams();
   const navigate = useNavigate();
@@ -14,7 +17,7 @@ function GroupDetail() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/auth/me", { credentials: "include" })
+    fetch(`${AZURE_URL}/api/auth/me`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Not logged in");
         return res.json();
@@ -24,7 +27,7 @@ function GroupDetail() {
   }, [navigate]);
 
   useEffect(() => {
-    fetch(`/api/groups/${groupId}`, { credentials: "include" })
+    fetch(`${AZURE_URL}/api/groups/${groupId}`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Group not found");
         return res.json();
@@ -40,7 +43,7 @@ function GroupDetail() {
     setError("");
     setMessage("");
 
-    fetch(`/api/groups/${groupId}`, {
+    fetch(`${AZURE_URL}/api/groups/${groupId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
