@@ -10,6 +10,10 @@ const LONG_BREAK_TIME = 1800; */
 const STUDY_TIME = 25;
 const SHORT_BREAK_TIME = 5;
 const LONG_BREAK_TIME = 30;
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
+
+const MAX_TIME = 1500; // 25 minutes in seconds
 
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
@@ -38,7 +42,8 @@ function Timer({ userId }) {
   const [isStudying, setIsStudying] = useState(true);
   const [rounds, setRounds] = useState(1);
   const [isSessionComplete, setIsSessionComplete] = useState(false);
-  const [securityError, setSecurityError] = useState(false);
+  const [errorStatus, setErrorStatus] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(false);
 
   const canvasRef = useRef(null);
   const sentTimeRef = useRef(0);
@@ -94,33 +99,48 @@ function Timer({ userId }) {
   }, [isRunning]);
 
   useEffect(() => {
-    if (time !== 0 || hasCompletedRef.current) return;
+    async function patchUserData() {
+      if (time !== 0 || hasCompletedRef.current) return;
 
-    hasCompletedRef.current = true;
+      hasCompletedRef.current = true;
 
-    const completedTime = isStudying ? STUDY_TIME - sentTimeRef.current : 0;
+      const completedTime = isStudying ? STUDY_TIME - sentTimeRef.current : 0;
 
-    if (completedTime > 0) {
-      sentTimeRef.current += completedTime;
+      const timeInHours = completedTime / 3600;
 
-      /*
-      fetch(`/api/users/${userId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          lapsedTime: completedTime,
-        }),
-      }).catch((error) => {
-        console.error("Failed to send total time:", error);
-      });
-      */
+      if (completedTime > 0) {
+        sentTimeRef.current += completedTime;
 
-      console.log("Completed study time:", completedTime);
+        try {
+          console.log("user", userId);
+          const res = await fetch(
+            `${AZURE_URL}/api/users/${userId}/study-time`,
+            {
+              method: "PATCH",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ hours: timeInHours }),
+            },
+          );
+
+          if (!res.ok) {
+            throw new Error();
+          }
+        } catch (error) {
+          if (error instanceof Error) {
+            setErrorStatus(true);
+            setErrorMsg("Network error: Failed to update study time.");
+          } else {
+            console.error("Failed to update study time:", error);
+          }
+        }
+      }
+
+      switchTime();
     }
 
-    switchTime();
+    // call function
+    patchUserData();
   }, [time, isStudying, userId, switchTime]);
 
   const handleLockChange = useCallback((locked) => {
@@ -139,7 +159,8 @@ function Timer({ userId }) {
       if (error.name === "NotSupportedError") {
         await canvas.requestPointerLock();
       } else if (error.name === "SecurityError") {
-        setSecurityError(true);
+        setErrorStatus(true);
+        setErrorMsg("Cannot start the session that quick :/");
       } else {
         console.error(error);
       }
@@ -165,14 +186,14 @@ function Timer({ userId }) {
   }
 
   useEffect(() => {
-    if (!securityError) return;
+    if (!errorStatus) return;
 
     const intervalId = setInterval(() => {
-      setSecurityError(false);
+      setErrorStatus(false);
     }, 5000);
 
     return () => clearInterval(intervalId);
-  }, [securityError]);
+  }, [errorStatus]);
 
   return (
     <div className={styles.timerCard}>
@@ -199,11 +220,7 @@ function Timer({ userId }) {
       <SessionButton isRunning={isRunning} onClick={handleSessionToggle} />
 
       <div className={styles.messageDiv}>
-        {securityError && (
-          <div className={styles.errorInfo}>
-            Cannot start the session that quick :/
-          </div>
-        )}
+        {errorStatus && <div className={styles.errorInfo}>{errorMsg}</div>}
       </div>
       <p className={styles.sessionInfo}>
         Press stop button or ESC to stop timer

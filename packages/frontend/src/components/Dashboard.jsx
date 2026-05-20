@@ -129,7 +129,7 @@ const Dashboard = () => {
             <div className="progress-percentage">{progress}%</div>
           </section>
 
-          <Timer />
+          <Timer userId={user._id} />
         </main>
 
         <aside className="dashboard-sidebar">
