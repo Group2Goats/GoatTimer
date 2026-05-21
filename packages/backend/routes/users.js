@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 import User from "../models/user.js";
 import Group from "../models/group.js";
 import requireAuth from "../middleware/requireAuth.js";
-import { createLeaderboardHandler } from "./leaderboard.js";
 
 const router = express.Router();
 
@@ -143,9 +142,6 @@ router.get("/", async (req, res) => {
     sendError(res, error);
   }
 });
-
-//get global all-time leaderboard from all MongoDB users
-router.get("/leaderboard", requireAuth, createLeaderboardHandler());
 
 //get all groups for one user
 router.get("/:userParam/groups", async (req, res) => {

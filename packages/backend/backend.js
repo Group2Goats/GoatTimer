@@ -8,6 +8,8 @@ import { PORT, IS_PRODUCTION } from "./config/env.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import groupRoutes from "./routes/groups.js";
+import { leaderboardHandler } from "./routes/leaderboard.js";
+import requireAuth from "./middleware/requireAuth.js";
 import { startResetJobs } from "./jobs/resetHours.js";
 
 dotenv.config();
@@ -48,6 +50,9 @@ app.get("/api/hello", (req, res) => {
 
 //auth routes
 app.use("/api/auth", authRoutes);
+
+//leaderboard route
+app.get("/api/users/leaderboard", requireAuth, leaderboardHandler);
 
 //user routes
 app.use("/api/users", userRoutes);

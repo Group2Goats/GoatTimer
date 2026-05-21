@@ -1,5 +1,20 @@
-import { describe, expect, it, vi } from "vitest";
-import { createLeaderboardHandler } from "@backend/routes/leaderboard.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const { Group, User } = vi.hoisted(() => ({
+  Group: {
+    findById: vi.fn(),
+    populate: vi.fn(),
+    lean: vi.fn(),
+  },
+  User: {
+    find: vi.fn(),
+  },
+}));
+
+vi.mock("@backend/models/group.js", () => ({ default: Group }));
+vi.mock("@backend/models/user.js", () => ({ default: User }));
+
+import { leaderboardHandler } from "@backend/routes/leaderboard.js";
 
 function createResponse() {
   const res = {};
@@ -21,29 +36,23 @@ function createUserQuery(users) {
   return query;
 }
 
-function createGroupQuery(group) {
-  const query = {};
-
-  query.findById = vi.fn(() => query);
-  query.populate = vi.fn(() => query);
-  query.lean = vi.fn().mockResolvedValue(group);
-
-  return query;
-}
-
 describe("leaderboard route handler", () => {
+  beforeEach(() => {
+    User.find.mockReset();
+    Group.findById.mockReset();
+    Group.populate.mockReset();
+    Group.lean.mockReset();
+  });
+
   it("returns global users ranked by total hours", async () => {
     const userQuery = createUserQuery([
       { _id: "user-1", name: "aras", totalHours: 20 },
       { _id: "user-2", name: "maastest", totalHours: 1.001111111111111 },
     ]);
-    const UserModel = {
-      find: vi.fn(() => userQuery),
-    };
-    const handler = createLeaderboardHandler({ UserModel });
+    User.find.mockReturnValue(userQuery);
     const res = createResponse();
 
-    await handler(
+    await leaderboardHandler(
       {
         auth: { userId: "user-2" },
         query: { scope: "global", limit: "2" },
@@ -51,7 +60,7 @@ describe("leaderboard route handler", () => {
       res,
     );
 
-    expect(UserModel.find).toHaveBeenCalledOnce();
+    expect(User.find).toHaveBeenCalledOnce();
     expect(userQuery.sort).toHaveBeenCalledWith({ totalHours: -1, name: 1 });
     expect(userQuery.limit).toHaveBeenCalledWith(2);
     expect(userQuery.select).toHaveBeenCalledWith("name email totalHours");
@@ -86,16 +95,12 @@ describe("leaderboard route handler", () => {
       ],
     };
 
-    const GroupModel = {
-      findById: vi.fn().mockReturnThis(),
-      populate: vi.fn().mockReturnThis(),
-      lean: vi.fn().mockResolvedValue(groupData),
-    };
-
-    const handler = createLeaderboardHandler({ GroupModel });
+    Group.findById.mockReturnValue(Group);
+    Group.populate.mockReturnValue(Group);
+    Group.lean.mockResolvedValue(groupData);
     const res = createResponse();
 
-    await handler(
+    await leaderboardHandler(
       {
         auth: { userId: "user-2" },
         query: {
@@ -107,9 +112,7 @@ describe("leaderboard route handler", () => {
       res,
     );
 
-    expect(GroupModel.findById).toHaveBeenCalledWith(
-      "665f5d34f1d2c3b4a5968701",
-    );
+    expect(Group.findById).toHaveBeenCalledWith("665f5d34f1d2c3b4a5968701");
     expect(res.json).toHaveBeenCalledWith({
       scope: "group",
       entries: [
@@ -132,16 +135,12 @@ describe("leaderboard route handler", () => {
   });
 
   it("returns 404 when group is not found", async () => {
-    const GroupModel = {
-      findById: vi.fn().mockReturnThis(),
-      populate: vi.fn().mockReturnThis(),
-      lean: vi.fn().mockResolvedValue(null),
-    };
-
-    const handler = createLeaderboardHandler({ GroupModel });
+    Group.findById.mockReturnValue(Group);
+    Group.populate.mockReturnValue(Group);
+    Group.lean.mockResolvedValue(null);
     const res = createResponse();
 
-    await handler(
+    await leaderboardHandler(
       {
         auth: { userId: "user-1" },
         query: {
@@ -159,12 +158,9 @@ describe("leaderboard route handler", () => {
   });
 
   it("returns 400 for invalid group ID format", async () => {
-    const GroupModel = {};
-
-    const handler = createLeaderboardHandler({ GroupModel });
     const res = createResponse();
 
-    await handler(
+    await leaderboardHandler(
       {
         auth: { userId: "user-1" },
         query: {
@@ -182,10 +178,9 @@ describe("leaderboard route handler", () => {
   });
 
   it("rejects requests without auth", async () => {
-    const handler = createLeaderboardHandler();
     const res = createResponse();
 
-    await handler({ query: { scope: "global" } }, res);
+    await leaderboardHandler({ query: { scope: "global" } }, res);
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
