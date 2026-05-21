@@ -3,11 +3,12 @@ import mongoose from "mongoose";
 
 import User from "../models/user.js";
 import Group from "../models/group.js";
+import requireAuth from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
 //group fields
-const allowedGroupUpdateFields = ["groupGoal", "hours"];
+const allowedGroupUpdateFields = ["name", "groupGoal", "hours"];
 
 function getAllowedUpdates(body, allowedFields) {
   return Object.fromEntries(
@@ -56,7 +57,12 @@ router.get("/", async (req, res) => {
 //create group
 router.post("/", async (req, res) => {
   try {
-    const { owner, groupGoal = 0, hours = 0 } = req.body;
+    const {
+      owner,
+      name = "Untitled Group",
+      groupGoal = 0,
+      hours = 0,
+    } = req.body;
     const users = getUsersArray(req.body.users);
 
     if (!owner || !mongoose.Types.ObjectId.isValid(owner)) {
@@ -72,6 +78,7 @@ router.post("/", async (req, res) => {
     const groupUsers = [...new Set([owner, ...users].map(String))];
 
     const group = await Group.create({
+      name,
       owner,
       users: groupUsers,
       groupGoal,
@@ -177,6 +184,55 @@ router.put("/:groupParam", async (req, res) => {
       .populate("users");
 
     return res.json(populatedGroup);
+  } catch (error) {
+    return sendError(res, error, 400);
+  }
+});
+
+//delete group
+router.delete("/:groupParam", requireAuth, async (req, res) => {
+  try {
+    const { groupParam } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(groupParam)) {
+      return res.status(400).json({ error: "Invalid group id" });
+    }
+
+    const group = await Group.findById(groupParam);
+
+    if (!group) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+
+    const ownerId = group.owner.toString();
+
+    const currentUserId =
+      req.auth?.userId ||
+      req.auth?.sub ||
+      req.user?._id?.toString() ||
+      req.userId;
+
+    if (!currentUserId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    if (ownerId !== currentUserId) {
+      return res.status(403).json({
+        error: "Only the group owner can delete this group",
+      });
+    }
+
+    await User.updateMany(
+      { groups: group._id },
+      { $pull: { groups: group._id } },
+    );
+
+    await Group.findByIdAndDelete(group._id);
+
+    return res.json({
+      message: "Group deleted successfully",
+      deletedGroupId: group._id,
+    });
   } catch (error) {
     return sendError(res, error, 400);
   }
