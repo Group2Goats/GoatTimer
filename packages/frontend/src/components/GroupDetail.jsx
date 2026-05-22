@@ -5,6 +5,10 @@ import "./GroupDetail.css";
 const AZURE_URL =
   "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
 
+function getId(value) {
+  return typeof value === "string" ? value : value?._id;
+}
+
 function GroupDetail() {
   const { groupId } = useParams();
   const navigate = useNavigate();
@@ -62,6 +66,11 @@ function GroupDetail() {
   }
 
   function handleKick(userId) {
+    if (!group || !user) return;
+
+    const ownerId = getId(group.owner);
+    const isOwner = ownerId === user._id;
+
     if (!isOwner) return;
 
     const confirmed = window.confirm("Remove this member from the group?");
@@ -70,7 +79,7 @@ function GroupDetail() {
     setError("");
     setMessage("");
 
-    fetch(`/api/groups/${groupId}`, {
+    fetch(`${AZURE_URL}/api/groups/${groupId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -85,6 +94,39 @@ function GroupDetail() {
         setMessage("Member removed.");
       })
       .catch((err) => setError(err.message));
+  }
+
+  function handleDeleteGroup() {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this group? This cannot be undone.",
+    );
+
+    if (!confirmed) return;
+
+    setError("");
+    setMessage("");
+
+    fetch(`${AZURE_URL}/api/groups/${groupId}`, {
+      method: "DELETE",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok) {
+          throw new Error(
+            data?.error || `Failed to delete group. Status: ${res.status}`,
+          );
+        }
+
+        return data;
+      })
+      .then(() => {
+        navigate("/groups");
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   }
 
   function copyGroupId() {
@@ -102,78 +144,130 @@ function GroupDetail() {
     );
   }
 
-  const isOwner = group.owner?._id === user._id;
+  const ownerId = getId(group.owner);
+  const isOwner = ownerId === user._id;
+  const groupHours = Number(group.hours || 0);
+  const groupGoal = Number(group.groupGoal || 0);
+  const groupProgress =
+    groupGoal > 0
+      ? Math.min(Math.round((groupHours / groupGoal) * 100), 100)
+      : 0;
+
+  const members = Array.isArray(group.users) ? group.users : [];
 
   return (
     <div className="groupDetailPage">
       <div className="groupDetailContainer">
         <div className="groupDetailCard">
           <div className="groupNameRow">
+            <div className="groupNameSpacer"></div>
+
             {editingName ? (
-              <>
-                <input
-                  className="groupNameInput"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <button className="groupSaveBtn" onClick={handleSaveName}>
-                  Save
-                </button>
-                <button
-                  className="groupCancelBtn"
-                  onClick={() => {
-                    setName(group.name || "");
-                    setEditingName(false);
-                  }}
-                >
-                  Cancel
-                </button>
-              </>
+              <input
+                className="groupNameInput"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             ) : (
-              <>
-                <h1 className="groupName">{group.name || "Untitled Group"}</h1>
-                {isOwner && (
-                  <button
-                    className="groupEditBtn"
-                    onClick={() => setEditingName(true)}
-                  >
-                    Edit
-                  </button>
-                )}
-              </>
+              <h1 className="groupName">{group.name || "Untitled Group"}</h1>
             )}
+
+            <div className="groupNameActions">
+              {isOwner && editingName ? (
+                <>
+                  <button className="groupSaveBtn" onClick={handleSaveName}>
+                    Save
+                  </button>
+
+                  <button
+                    className="groupCancelBtn"
+                    onClick={() => {
+                      setName(group.name || "");
+                      setEditingName(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                isOwner && (
+                  <>
+                    <button
+                      className="groupEditBtn"
+                      onClick={() => setEditingName(true)}
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      className="groupDeleteTopBtn"
+                      onClick={handleDeleteGroup}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )
+              )}
+            </div>
           </div>
 
           <div className="groupIdSection">
             <label className="groupSectionLabel">Group ID:</label>
+
             <div className="groupIdRow">
               <span className="groupIdValue">{group._id}</span>
+
               <button className="copyBtn" onClick={copyGroupId}>
                 Copy
               </button>
             </div>
           </div>
 
+          <div className="groupProgressSection">
+            <div className="groupProgressHeader">
+              <span>Group progress</span>
+
+              <strong>
+                {groupHours}/{groupGoal} hours
+              </strong>
+            </div>
+
+            <div className="groupProgressTrack">
+              <div
+                className="groupProgressFill"
+                style={{ width: `${groupProgress}%` }}
+              ></div>
+            </div>
+
+            <div className="groupProgressPercent">{groupProgress}%</div>
+          </div>
+
           <div className="groupMembersSection">
             <h2 className="groupSectionHeading">Members</h2>
+
             <ul className="groupMemberList">
-              {group.users.map((member) => {
-                const isLeader = member._id === group.owner?._id;
-                const isSelf = member._id === user._id;
+              {members.map((member) => {
+                const memberId = getId(member);
+                const isLeader = memberId === ownerId;
+                const isSelf = memberId === user._id;
+
                 return (
-                  <li key={member._id} className="groupMemberItem">
+                  <li key={memberId} className="groupMemberItem">
                     <span className="groupMemberName">
-                      {member.name || member.email}
+                      {member.name || member.email || memberId}
                     </span>
+
                     {isLeader && <span className="leaderBadge">Leader</span>}
+
                     {isOwner && !isLeader && (
                       <button
                         className="kickBtn"
-                        onClick={() => handleKick(member._id)}
+                        onClick={() => handleKick(memberId)}
                       >
                         Kick
                       </button>
                     )}
+
                     {isSelf && !isLeader && (
                       <span className="selfBadge">You</span>
                     )}
@@ -186,12 +280,21 @@ function GroupDetail() {
           {message && <p className="groupDetailMessage">{message}</p>}
           {error && <p className="groupDetailError">{error}</p>}
 
-          <button
-            className="groupBackBtn"
-            onClick={() => navigate("/dashboard")}
-          >
-            Back to Dashboard
-          </button>
+          <div className="groupDetailActions">
+            <button
+              className="groupBackBtn"
+              onClick={() => navigate("/groups")}
+            >
+              Back to Groups
+            </button>
+
+            <button
+              className="groupBackBtn"
+              onClick={() => navigate("/dashboard")}
+            >
+              Back to Dashboard
+            </button>
+          </div>
         </div>
       </div>
     </div>

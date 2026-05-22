@@ -49,7 +49,7 @@ ReactDOM.createRoot(root).render(
         }
       />
       <Route
-        path="/create-group"
+        path="/groups"
         element={
           <RequireAuth>
             <CreateGroup />

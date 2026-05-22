@@ -55,19 +55,11 @@ router.get("/", async (req, res) => {
 });
 
 //create group
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
-    const {
-      owner,
-      name = "Untitled Group",
-      groupGoal = 0,
-      hours = 0,
-    } = req.body;
+    const owner = req.auth.userId;
+    const { name = "Untitled Group", groupGoal = 0, hours = 0 } = req.body;
     const users = getUsersArray(req.body.users);
-
-    if (!owner || !mongoose.Types.ObjectId.isValid(owner)) {
-      return res.status(400).json({ error: "Valid owner id is required" });
-    }
 
     const ownerUser = await User.findById(owner);
 
@@ -206,17 +198,7 @@ router.delete("/:groupParam", requireAuth, async (req, res) => {
 
     const ownerId = group.owner.toString();
 
-    const currentUserId =
-      req.auth?.userId ||
-      req.auth?.sub ||
-      req.user?._id?.toString() ||
-      req.userId;
-
-    if (!currentUserId) {
-      return res.status(401).json({ error: "Authentication required" });
-    }
-
-    if (ownerId !== currentUserId) {
+    if (ownerId !== req.auth.userId) {
       return res.status(403).json({
         error: "Only the group owner can delete this group",
       });
