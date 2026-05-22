@@ -1,3 +1,4 @@
+//displays one group, including its members, progress, group leaderboard, owner controls, and navigation actions.
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import Leaderboard from "./Leaderboard";

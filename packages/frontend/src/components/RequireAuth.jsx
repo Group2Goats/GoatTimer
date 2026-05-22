@@ -1,3 +1,4 @@
+//checks if users are logged in and redirects unauth users
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router";
 

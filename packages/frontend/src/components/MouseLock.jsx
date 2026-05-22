@@ -1,3 +1,4 @@
+//trap mouse movement within canvas and show the mouse/ball position when active
 import { useEffect, useRef } from "react";
 import styles from "./Timer.module.css";
 

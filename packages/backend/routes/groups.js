@@ -1,3 +1,4 @@
+//handle group routes for listing, creating, updating, joining/leaving, and deleting groups
 import express from "express";
 import mongoose from "mongoose";
 
@@ -10,6 +11,7 @@ const router = express.Router();
 //group fields
 const allowedGroupUpdateFields = ["name", "groupGoal", "hours"];
 
+//keeps only the request body fields that are allowed to be updated
 function getAllowedUpdates(body, allowedFields) {
   return Object.fromEntries(
     Object.entries(body).filter(([key]) => allowedFields.includes(key)),
@@ -115,7 +117,7 @@ router.get("/:groupParam", async (req, res) => {
   }
 });
 
-//group
+//update group fields and handles adding or removing users from the group
 router.put("/:groupParam", async (req, res) => {
   try {
     const { groupParam } = req.params;

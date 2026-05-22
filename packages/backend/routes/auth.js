@@ -1,3 +1,4 @@
+//handles signup, login, current-user lookup, and logout using JWT
 import express from "express";
 import {
   AUTH_COOKIE_NAME,
@@ -33,7 +34,7 @@ function isDuplicateEmailError(error) {
 
   return Boolean(hasEmailKey);
 }
-
+//creates a new user, prevents duplicate emails, set JWT cookie, and return user
 router.post("/signup", async (req, res) => {
   try {
     const email =
@@ -69,7 +70,7 @@ router.post("/signup", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-
+//logs in an existing user, upgrades plain-text password if needed, set JWT cookie, and return user
 router.post("/login", async (req, res) => {
   try {
     const email =
@@ -95,7 +96,7 @@ router.post("/login", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-
+//return currently logged-in user using verified JWT data from requireAuth
 router.get("/me", requireAuth, async (req, res) => {
   try {
     const user = await User.findOne({ email: req.auth.email });
@@ -107,7 +108,7 @@ router.get("/me", requireAuth, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
+//clears auth cookie to log the user out
 router.post("/logout", (req, res) => {
   res.clearCookie(AUTH_COOKIE_NAME, clearAuthCookieOptions);
   res.json({ message: "Logged out" });

@@ -1,3 +1,4 @@
+//set up React app, navbar, routes, pages that require login
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";

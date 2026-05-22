@@ -1,3 +1,4 @@
+// Logs in a user, stores their user id locally, and redirects them based on their commitment setup.
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import "./Login.css";

@@ -1,3 +1,4 @@
+//handles user routes for commitments, study time, lookup, groups, and profile updates.
 import express from "express";
 import mongoose from "mongoose";
 
@@ -22,11 +23,12 @@ const allowedUserUpdateFields = [
 ];
 
 const commitmentGoals = {
-  low: 70,
-  medium: 105,
-  hard: 140,
+  low: 20,
+  medium: 40,
+  hard: 60,
 };
 
+//keeps only the request body fields that are allowed to be updated
 function getAllowedUpdates(body, allowedFields) {
   return Object.fromEntries(
     Object.entries(body).filter(([key]) => allowedFields.includes(key)),

@@ -1,3 +1,4 @@
+//run pomodoro timer, locks mouse movement, save completed study time to backend
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Timer.module.css";
 import MouseLock from "./MouseLock.jsx";
@@ -9,8 +10,7 @@ const LONG_BREAK_TIME = 1800;
 const AZURE_URL =
   "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
 
-const MAX_TIME = 1500; // 25 minutes in seconds
-
+//converts seconds into MM:SS format.
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
@@ -42,9 +42,10 @@ function Timer({ userId }) {
   const [errorMsg, setErrorMsg] = useState(false);
 
   const canvasRef = useRef(null);
+  //tracks how much time has already been saved so the same session is not counted twice
   const sentTimeRef = useRef(0);
   const hasCompletedRef = useRef(false);
-
+  //determine if next session should be a short break, long break, or focus round
   const getNextSession = useCallback(() => {
     if (isStudying) {
       const nextIsLongBreak = rounds % 4 === 0;
@@ -60,7 +61,7 @@ function Timer({ userId }) {
       time: STUDY_TIME,
     };
   }, [isStudying, rounds]);
-
+  //switch to the next timer mode after a session finishes
   const switchTime = useCallback(() => {
     const nextSession = getNextSession();
 
@@ -75,7 +76,7 @@ function Timer({ userId }) {
       setRounds((prevRounds) => prevRounds + 1);
     }
   }, [isStudying, getNextSession]);
-
+  //count down once per second while the session is running
   useEffect(() => {
     if (!isRunning) return;
 
@@ -93,7 +94,7 @@ function Timer({ userId }) {
 
     return () => clearInterval(intervalId);
   }, [isRunning]);
-
+  //saves completed time to backend when the timer reaches zero
   useEffect(() => {
     async function patchUserData() {
       if (time !== 0 || hasCompletedRef.current) return;
@@ -138,7 +139,7 @@ function Timer({ userId }) {
     // call function
     patchUserData();
   }, [time, isStudying, userId, switchTime]);
-
+  //starts or stops the countdown based on whether the mouse is locked
   const handleLockChange = useCallback((locked) => {
     setIsRunning(locked);
   }, []);
@@ -180,7 +181,7 @@ function Timer({ userId }) {
       await startSession();
     }
   }
-
+  //clears temp err messages
   useEffect(() => {
     if (!errorStatus) return;
 
