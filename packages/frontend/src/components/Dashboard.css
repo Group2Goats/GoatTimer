@@ -236,12 +236,67 @@ body {
   padding: 30px;
 }
 
+.leaderboard-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
 .leaderboard-title {
   text-align: center;
-  margin-top: 0;
-  margin-bottom: 25px;
+  margin: 0;
   font-weight: bold;
   font-size: 1.1rem;
+}
+
+.leaderboard-stats {
+  display: block;
+}
+
+.leaderboard-stat {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.leaderboard-stat-value {
+  color: var(--brand-black);
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.leaderboard-stat-label {
+  color: var(--text-gray);
+  font-size: 0.78rem;
+  line-height: 1.1;
+}
+
+.leaderboard-subtitle {
+  color: var(--text-gray);
+  font-size: 0.96rem;
+  font-style: italic;
+  margin: 0;
+  text-align: center;
+}
+
+.leaderboard-message {
+  color: var(--text-gray);
+  font-size: 1rem;
+  line-height: 1.35;
+  margin: 0;
+  text-align: center;
+}
+
+.leaderboard-error {
+  color: #9f1d1d;
 }
 
 .leaderboard-list {
@@ -258,6 +313,13 @@ body {
   align-items: center;
   padding: 8px 0;
   border-bottom: 1px solid #eaeaea;
+}
+
+.leaderboard-item.current-user {
+  background: rgba(155, 158, 206, 0.16);
+  border-radius: 12px;
+  margin-inline: -8px;
+  padding-inline: 8px;
 }
 
 .leaderboard-item:last-child {
@@ -285,8 +347,26 @@ body {
 .player-name {
   font-style: italic;
   flex-grow: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.current-user-label {
+  background: var(--brand-black);
+  border-radius: 999px;
+  color: var(--white);
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-style: normal;
+  line-height: 1;
+  margin-left: 8px;
+  padding: 4px 7px;
+  vertical-align: middle;
 }
 
 .player-score {
   font-weight: bold;
+  margin-left: 10px;
+  white-space: nowrap;
 }
