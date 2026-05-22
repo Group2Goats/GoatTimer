@@ -1,3 +1,4 @@
+//loads backend environment variables, stops server if req vals are missing
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";

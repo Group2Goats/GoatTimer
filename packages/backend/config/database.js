@@ -1,3 +1,4 @@
+//connects the backend server to MongoDB and exits if connection fails
 import mongoose from "mongoose";
 import { MONGO_URI } from "./env.js";
 
