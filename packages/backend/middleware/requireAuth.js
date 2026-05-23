@@ -1,7 +1,9 @@
+//verifies the JWT from the auth cookie and attaches the logged-in user's email and id to req.auth.
 import jwt from "jsonwebtoken";
 import { AUTH_COOKIE_NAME } from "../config/auth.js";
 import { JWT_SECRET } from "../config/env.js";
 
+//gets the JWT from a bearer token header if one was sent
 function getBearerToken(req) {
   const authorization = req.get("authorization");
 
@@ -14,6 +16,7 @@ function getBearerToken(req) {
   return scheme?.toLowerCase() === "bearer" && token ? token : "";
 }
 
+//requires a valid JWT, then stores the logged-in user's email and id on req.auth.
 function requireAuth(req, res, next) {
   const token = req.cookies[AUTH_COOKIE_NAME] || getBearerToken(req);
 

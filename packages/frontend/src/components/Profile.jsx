@@ -1,3 +1,4 @@
+//displays the user profile, logout, deletion
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import "./Profile.css";

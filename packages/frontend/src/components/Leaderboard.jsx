@@ -1,3 +1,4 @@
+//loads and displays the global or group leaderboard with the current user's hours highlightedz
 import { useEffect, useState } from "react";
 
 const AZURE_URL =

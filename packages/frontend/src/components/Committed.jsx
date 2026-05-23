@@ -1,25 +1,29 @@
+//lets a user choose a commitment level, saves it to the backend, and sends them to the dashboard
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import "./Committed.css";
+
+const AZURE_URL =
+  "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
 
 const TIERS = [
   {
     key: "low",
     label: "Low",
-    hours: 70,
-    daily: "around 10 hours/day",
+    hours: 20,
+    daily: "around 2 hours/day",
   },
   {
     key: "medium",
     label: "Medium",
-    hours: 105,
-    daily: "around 15 hours/day",
+    hours: 40,
+    daily: "around 4 hours/day",
   },
   {
     key: "hard",
     label: "Hard",
-    hours: 140,
-    daily: "around 20 hours/day",
+    hours: 60,
+    daily: "around 8 hours/day",
   },
 ];
 
@@ -32,7 +36,7 @@ function Committed() {
     setError("");
 
     try {
-      const res = await fetch("/api/users/me/commitment", {
+      const res = await fetch(`${AZURE_URL}/api/users/me/commitment`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -45,8 +49,8 @@ function Committed() {
           return;
         }
 
-        const data = await res.json();
-        setError(data.error || "Could not save commitment level");
+        const data = await res.json().catch(() => null);
+        setError(data?.error || "Could not save commitment level");
         return;
       }
 
@@ -71,7 +75,9 @@ function Committed() {
         {TIERS.map((tier) => (
           <button
             key={tier.key}
-            className={`tier-card ${selected === tier.key ? "tier-card--selected" : ""}`}
+            className={`tier-card ${
+              selected === tier.key ? "tier-card--selected" : ""
+            }`}
             onClick={() => setSelected(tier.key)}
             aria-pressed={selected === tier.key}
           >

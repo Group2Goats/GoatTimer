@@ -1,3 +1,4 @@
+//displays the user's dashboard with progress, timer, leaderboard, navigation, and logout.
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import "./Dashboard.css";
@@ -12,6 +13,7 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  //loads the user when the dashboard opens and redirects to login if the session is invalid
   useEffect(() => {
     fetch(`${AZURE_URL}/api/auth/me`, { credentials: "include" })
       .then((res) => {

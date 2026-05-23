@@ -1,3 +1,4 @@
+//signs up a new user, stores their user id locally, send to setup
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import "./Signup.css";

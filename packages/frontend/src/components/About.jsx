@@ -1,3 +1,4 @@
+//display about page content
 import styles from "./About.module.css";
 
 function About() {

@@ -1,3 +1,4 @@
+//handle navbars depending on if user is logged in or not
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router";

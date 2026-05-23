@@ -1,3 +1,4 @@
+//lets users create, join, view, and switch between their groups and all groups
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import "./CreateGroup.css";
@@ -16,6 +17,7 @@ function getGroupProgress(group) {
   return Math.min(Math.round((hours / goal) * 100), 100);
 }
 
+//handles both populated objects and raw MongoDB id strings
 function getId(value) {
   return typeof value === "string" ? value : value?._id;
 }
@@ -33,6 +35,7 @@ function CreateGroup() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  //loads the user so the page can show only their groups by default
   useEffect(() => {
     fetch(`${AZURE_URL}/api/auth/me`, { credentials: "include" })
       .then((res) => {
@@ -43,6 +46,7 @@ function CreateGroup() {
       .catch(() => navigate("/login"));
   }, [navigate]);
 
+  //loads the group list when the page opens.
   useEffect(() => {
     loadGroups();
   }, []);
@@ -66,6 +70,7 @@ function CreateGroup() {
       });
   }
 
+  //current user group is one where the user is either the owner or a member
   function isCurrentUserGroup(group) {
     if (!user) return false;
 
@@ -151,6 +156,7 @@ function CreateGroup() {
     }
   }
 
+  //shows either all groups or only the groups connected to the current user
   const visibleGroups = showAllGroups
     ? groups
     : groups.filter(isCurrentUserGroup);

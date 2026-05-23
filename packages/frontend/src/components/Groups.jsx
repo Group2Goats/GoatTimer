@@ -1,3 +1,4 @@
+//displays all groups as cards with owner, member count, and progress information
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import "./Groups.css";

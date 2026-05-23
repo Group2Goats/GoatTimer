@@ -1,9 +1,11 @@
+//schema for users: auth fields, study goals, schedule, hours, password hashing
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
 const SALT_ROUNDS = 12;
 const BCRYPT_HASH_PATTERN = /^\$2[aby]\$\d{2}\$/;
 
+//checks whether a password value is already a bcrypt hash
 function isPasswordHash(password) {
   return typeof password === "string" && BCRYPT_HASH_PATTERN.test(password);
 }
@@ -17,7 +19,7 @@ const dayNames = [
   "saturday",
   "sunday",
 ];
-
+//user's weekly availability, including days, start time, end time, and timezone
 const scheduleSchema = new mongoose.Schema(
   {
     days: {
@@ -53,6 +55,7 @@ const scheduleSchema = new mongoose.Schema(
   { _id: false },
 );
 
+//user model fields, ensure password not present when returning data
 const userSchema = new mongoose.Schema(
   {
     // Groups that the user belongs to
@@ -155,6 +158,7 @@ const userSchema = new mongoose.Schema(
   },
 );
 
+//hashes password before saving a user, unless it is unchanged or already hashed
 userSchema.pre("save", async function hashPassword() {
   if (!this.isModified("password") || isPasswordHash(this.password)) {
     return;
@@ -163,6 +167,7 @@ userSchema.pre("save", async function hashPassword() {
   this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
 });
 
+//checks if plain password matches the user's hashed password
 userSchema.methods.comparePassword = async function comparePassword(password) {
   if (!password || !this.password) {
     return false;
@@ -171,6 +176,7 @@ userSchema.methods.comparePassword = async function comparePassword(password) {
   return bcrypt.compare(password, this.password);
 };
 
+//hashes password so it can be reused outside the save hook
 userSchema.statics.hashPassword = function hashPassword(password) {
   return bcrypt.hash(password, SALT_ROUNDS);
 };

@@ -1,3 +1,4 @@
+//loads global or group leaderboard data and returns ranked users with the current user marked
 import mongoose from "mongoose";
 
 import User from "../models/user.js";
@@ -6,6 +7,7 @@ import Group from "../models/group.js";
 const DEFAULT_LIMIT = 5;
 const MAX_LIMIT = 50;
 
+//parse and cap leaderboard limit
 export function getLeaderboardLimit(rawLimit) {
   const parsedLimit = Number.parseInt(rawLimit, 10);
 
@@ -15,11 +17,11 @@ export function getLeaderboardLimit(rawLimit) {
 
   return Math.min(parsedLimit, MAX_LIMIT);
 }
-
+//gets user id as a string from either a user object or raw id
 function getUserId(user) {
   return user?._id?.toString?.() || user?.toString?.() || String(user || "");
 }
-
+//converts users into ranked leaderboard entries and marks the current user
 export function mapUsersToLeaderboardEntries(users, currentUserId) {
   return users.map((user, index) => {
     const userId = getUserId(user);

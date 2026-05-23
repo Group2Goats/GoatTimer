@@ -1,3 +1,4 @@
+//schema for group: name, owner, members, goal, logged hours
 import mongoose from "mongoose";
 
 const groupSchema = new mongoose.Schema(
