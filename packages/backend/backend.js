@@ -11,6 +11,11 @@ import groupRoutes from "./routes/groups.js";
 import { leaderboardHandler } from "./routes/leaderboard.js";
 import requireAuth from "./middleware/requireAuth.js";
 import { startResetJobs } from "./jobs/resetHours.js";
+import {
+  apiLimiter,
+  authLimiter,
+  writeLimiter,
+} from "./middleware/rateLimit.js";
 
 dotenv.config();
 
@@ -43,22 +48,28 @@ app.options(/.*/, cors());
 app.use(express.json());
 app.use(cookieParser());
 
+// trust proxy so rate limiter sees real client ip behind azure/load balancer
+app.set("trust proxy", 1);
+
+// general backstop on every /api request
+app.use("/api", apiLimiter);
+
 //test server
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });
 
-//auth routes
-app.use("/api/auth", authRoutes);
+//auth routes -- strict limit on top of the api limit
+app.use("/api/auth", authLimiter, authRoutes);
 
 //leaderboard route
 app.get("/api/users/leaderboard", requireAuth, leaderboardHandler);
 
-//user routes
-app.use("/api/users", userRoutes);
+//user routes -- write ops get the writeLimiter
+app.use("/api/users", writeLimiter, userRoutes);
 
-//group routes
-app.use("/api/groups", groupRoutes);
+//group routes -- write ops get the writeLimiter
+app.use("/api/groups", writeLimiter, groupRoutes);
 
 //connect and start server
 connectDB()
