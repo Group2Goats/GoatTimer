@@ -1,11 +1,9 @@
-// rate limiting -- so nobody can hammer our api and run up the bill
-// uses in-memory store by default. fine for single-instance deploys.
-// btw if we ever scale to multiple servers we'd want a redis store
-
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import jwt from "jsonwebtoken";
 import { AUTH_COOKIE_NAME } from "../config/auth.js";
 import { JWT_SECRET } from "../config/env.js";
+
+const skipPreflight = (req) => req.method === "OPTIONS";
 
 // pull the userId out of the auth cookie if its valid
 // we cant rely on req.auth here because limiters run before requireAuth
@@ -28,7 +26,7 @@ function getUserIdFromRequest(req) {
 // this way multiple devices on the same wan ip (dorm/cgnat) dont share a bucket once logged in
 // note: ipKeyGenerator handles ipv6 properly so we dont collapse all ipv6 into one key
 function userOrIpKey(req) {
-  return getUserIdFromRequest(req) || ipKeyGenerator(req);
+  return getUserIdFromRequest(req.ip) || ipKeyGenerator(req.ip);
 }
 
 // generic backstop for the whole api
@@ -39,6 +37,7 @@ export const apiLimiter = rateLimit({
   standardHeaders: "draft-7",
   legacyHeaders: false,
   keyGenerator: userOrIpKey,
+  skip: skipPreflight,
   message: { error: "Too many requests, slow down" },
 });
 
@@ -52,6 +51,7 @@ export const authLimiter = rateLimit({
   legacyHeaders: false,
   // dont count successful logins, only failed attempts
   skipSuccessfulRequests: true,
+  skip: skipPreflight,
   message: { error: "Too many auth attempts, try again later" },
 });
 
@@ -63,5 +63,6 @@ export const writeLimiter = rateLimit({
   standardHeaders: "draft-7",
   legacyHeaders: false,
   keyGenerator: userOrIpKey,
+  skip: skipPreflight,
   message: { error: "Too many write requests, slow down" },
 });
