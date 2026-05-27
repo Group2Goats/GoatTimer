@@ -22,11 +22,27 @@ function getUserIdFromRequest(req) {
   }
 }
 
-// key by authed user id when we have it, otherwise fall back to ip
-// this way multiple devices on the same wan ip (dorm/cgnat) dont share a bucket once logged in
-// note: ipKeyGenerator handles ipv6 properly so we dont collapse all ipv6 into one key
+// for azure deployment
+function getClientIp(req) {
+  const forwardedFor = req.headers["x-forwarded-for"];
+
+  const rawIp = forwardedFor
+    ? forwardedFor.split(",")[0].trim()
+    : req.ip || req.socket?.remoteAddress || "";
+
+  // If IPv4 has a port appended, strip it
+  return rawIp.replace(/^(\d{1,3}(?:\.\d{1,3}){3}):\d+$/, "$1");
+}
+
 function userOrIpKey(req) {
-  return getUserIdFromRequest(req.ip) || ipKeyGenerator(req.ip);
+  const userId = getUserIdFromRequest(req);
+  if (userId) return `user:${userId}`;
+
+  return `ip:${ipKeyGenerator(getClientIp(req))}`;
+}
+
+function ipOnlyKey(req) {
+  return `ip:${ipKeyGenerator(getClientIp(req))}`;
 }
 
 // generic backstop for the whole api
@@ -49,6 +65,7 @@ export const authLimiter = rateLimit({
   limit: 10,
   standardHeaders: "draft-7",
   legacyHeaders: false,
+  keyGenerator: ipOnlyKey,
   // dont count successful logins, only failed attempts
   skipSuccessfulRequests: true,
   skip: skipPreflight,
