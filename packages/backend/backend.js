@@ -49,7 +49,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // trust proxy so rate limiter sees real client ip behind azure/load balancer
-app.set("trust proxy", 1);
+//app.set("trust proxy", 1);
 
 // general backstop on every /api request
 app.use("/api", apiLimiter);
