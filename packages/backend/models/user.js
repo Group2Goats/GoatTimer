@@ -140,6 +140,18 @@ const userSchema = new mongoose.Schema(
       type: Number,
       min: [0, "age cannot be negative"],
     },
+
+    interests: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    profileVisibility: {
+      type: String,
+      enum: ["public", "groups", "private"],
+      default: "private",
+    },
   },
   {
     timestamps: true,

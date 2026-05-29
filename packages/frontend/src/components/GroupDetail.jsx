@@ -255,24 +255,50 @@ function GroupDetail() {
 
                 return (
                   <li key={memberId} className="groupMemberItem">
-                    <span className="groupMemberName">
-                      {member.name || member.email || memberId}
-                    </span>
+                    <div className="groupMemberLeft">
+                      {isLeader && (
+                        <span
+                          className="leaderCrown"
+                          title="Leader"
+                          aria-label="Leader"
+                        >
+                          👑
+                        </span>
+                      )}
+                    </div>
 
-                    {isLeader && <span className="leaderBadge">Leader</span>}
+                    <div className="groupMemberBubble">
+                      <div className="groupMemberBubbleSpacer"></div>
 
-                    {isOwner && !isLeader && (
-                      <button
-                        className="kickBtn"
-                        onClick={() => handleKick(memberId)}
-                      >
-                        Kick
-                      </button>
-                    )}
+                      <span className="groupMemberName">
+                        {member.name || member.email || memberId}
+                      </span>
 
-                    {isSelf && !isLeader && (
-                      <span className="selfBadge">You</span>
-                    )}
+                      <div className="groupMemberActions">
+                        <button
+                          type="button"
+                          className="viewProfileBtn"
+                          onClick={() =>
+                            navigate(isSelf ? "/profile" : `/users/${memberId}`)
+                          }
+                        >
+                          View Profile
+                        </button>
+
+                        {isOwner && !isLeader && (
+                          <button
+                            className="kickBtn"
+                            onClick={() => handleKick(memberId)}
+                          >
+                            Kick
+                          </button>
+                        )}
+
+                        {isSelf && !isLeader && (
+                          <span className="selfBadge">You</span>
+                        )}
+                      </div>
+                    </div>
                   </li>
                 );
               })}

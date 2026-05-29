@@ -229,31 +229,108 @@
 }
 
 .groupMemberItem {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.groupMemberLeft {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  width: 44px;
+  min-width: 44px;
+}
+
+.groupMemberBubble {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 58px;
   padding: 12px 18px;
   border-radius: 999px;
   border: 1.5px solid rgba(0, 8, 7, 0.16);
   background: rgba(255, 255, 255, 0.42);
 }
 
+.groupMemberBubbleSpacer {
+  display: none;
+}
+/*offset name left by half the button column so it centered*/
 .groupMemberName {
-  flex: 1;
+  position: absolute;
+  left: calc(60% - 95px);  transform: translateX(-50%);
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1rem;
   color: var(--brand-black);
   text-align: center;
+  white-space: nowrap;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.leaderBadge {
+.groupMemberActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  z-index: 2;
+}
+
+.leaderCrown {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  cursor: default;
+  width: 36px;
+  height: 36px;
+}
+
+.leaderCrown::after {
+  content: "Leader";
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--brand-black);
+  color: var(--white);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.18s ease;
+  z-index: 20;
+}
+
+.leaderCrown:hover::after {
+  opacity: 1;
+}
+
+.viewProfileBtn {
   background: var(--accent-purple, #9b9ece);
   color: var(--brand-black);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 4px 12px;
+  border: none;
   border-radius: 999px;
+  padding: 6px 16px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.18s ease;
+  white-space: nowrap;
+}
+
+.viewProfileBtn:hover {
+  opacity: 0.85;
 }
 
 .selfBadge {
@@ -279,7 +356,6 @@
 .kickBtn:hover {
   opacity: 0.85;
 }
-
 /* Messages */
 .groupDetailMessage {
   font-family: Georgia, "Times New Roman", serif;
@@ -357,6 +433,33 @@
   }
 
   .groupMemberItem {
-    flex-wrap: wrap;
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
+
+  .groupMemberLeft {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .groupMemberBubble {
+    border-radius: 24px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .groupMemberName {
+    position: static;
+    transform: none;
+    max-width: 100%;
+  }
+
+  .groupMemberActions {
+    margin-left: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+
+
 }
