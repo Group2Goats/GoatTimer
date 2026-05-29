@@ -1,4 +1,4 @@
-// Displays the user profile, logout, deletion, and profile viewability settings.
+// Displays the user profile, logout, deletion, profile viewability, interests, and feature controls.
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import "./Profile.css";
@@ -8,6 +8,12 @@ const AZURE_URL =
 
 const MAX_INTERESTS = 10;
 const MAX_INTEREST_LENGTH = 24;
+
+const PROFILE_VISIBILITY_OPTIONS = [
+  { value: "public", label: "Public" },
+  { value: "groups", label: "People in my groups" },
+  { value: "private", label: "Private" },
+];
 
 function normalizeInterests(interests) {
   if (Array.isArray(interests)) {
@@ -58,27 +64,16 @@ function getInterestError(value, currentInterests) {
   return "";
 }
 
-const PROFILE_VISIBILITY_OPTIONS = [
-  {
-    value: "public",
-    label: "Public",
-  },
-  {
-    value: "groups",
-    label: "People in my groups",
-  },
-  {
-    value: "private",
-    label: "Private",
-  },
-];
-
 function Profile() {
   const [user, setUser] = useState(null);
   const [form, setForm] = useState({
     age: "",
-    interests: "",
+    interests: [],
     profileVisibility: "private",
+    featureSettings: {
+      groupsEnabled: true,
+      leaderboardEnabled: true,
+    },
   });
   const [interestInput, setInterestInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -97,9 +92,12 @@ function Profile() {
         setForm({
           age: data.user.age || "",
           interests: normalizeInterests(data.user.interests),
-          profileVisibility:
-            data.user.profileVisibility ||
-            (data.user.isProfilePublic ? "public" : "private"),
+          profileVisibility: data.user.profileVisibility || "private",
+          featureSettings: {
+            groupsEnabled: data.user.featureSettings?.groupsEnabled !== false,
+            leaderboardEnabled:
+              data.user.featureSettings?.leaderboardEnabled !== false,
+          },
         });
         setLoading(false);
       })
@@ -108,47 +106,6 @@ function Profile() {
         setLoading(false);
       });
   }, []);
-
-  function handleSaveProfile() {
-    if (!user) return;
-
-    setError("");
-    setMessage("");
-
-    fetch(`${AZURE_URL}/api/users/${user._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        age: form.age ? Number(form.age) : undefined,
-        interests: form.interests,
-        profileVisibility: form.profileVisibility,
-        isProfilePublic: form.profileVisibility === "public",
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to update profile");
-        return res.json();
-      })
-      .then((data) => {
-        setUser(data);
-        setMessage("Profile updated.");
-      })
-      .catch((err) => setError(err.message));
-  }
-
-  function handleLogout() {
-    const confirmed = window.confirm("Are you sure you want to log out?");
-    if (!confirmed) return;
-
-    fetch(`${AZURE_URL}/api/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    }).then(() => {
-      localStorage.removeItem("userId");
-      navigate("/");
-    });
-  }
 
   function handleAddInterest() {
     const cleaned = cleanInterest(interestInput);
@@ -176,6 +133,58 @@ function Profile() {
         (interest) => interest !== interestToRemove,
       ),
     }));
+  }
+
+  function handleSaveProfile() {
+    if (!user) return;
+
+    setError("");
+    setMessage("");
+
+    fetch(`${AZURE_URL}/api/users/${user._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        age: form.age === "" ? null : Number(form.age),
+        interests: form.interests,
+        profileVisibility: form.profileVisibility,
+        featureSettings: form.featureSettings,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to update profile");
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data);
+        setForm((current) => ({
+          ...current,
+          age: data.age || "",
+          interests: normalizeInterests(data.interests),
+          profileVisibility: data.profileVisibility || "private",
+          featureSettings: {
+            groupsEnabled: data.featureSettings?.groupsEnabled !== false,
+            leaderboardEnabled:
+              data.featureSettings?.leaderboardEnabled !== false,
+          },
+        }));
+        setMessage("Profile updated.");
+      })
+      .catch((err) => setError(err.message));
+  }
+
+  function handleLogout() {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
+
+    fetch(`${AZURE_URL}/api/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    }).then(() => {
+      localStorage.removeItem("userId");
+      navigate("/");
+    });
   }
 
   function handleDelete() {
@@ -259,7 +268,87 @@ function Profile() {
 
           <div className="profileRow">
             <label className="profileLabel">ID:</label>
-            <div className="profileValue">{user._id || "—"} </div>
+            <div className="profileValue">{user._id || "—"}</div>
+          </div>
+
+          <div className="profileVisibilitySection">
+            <h2 className="profileVisibilityTitle">Profile Viewability</h2>
+
+            <div className="profileVisibilityOptions">
+              {PROFILE_VISIBILITY_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`profileVisibilityBtn ${
+                    form.profileVisibility === option.value
+                      ? "profileVisibilityBtnSelected"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    setForm((current) => ({
+                      ...current,
+                      profileVisibility: option.value,
+                    }))
+                  }
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="profileVisibilitySection">
+            <h2 className="profileVisibilityTitle">Feature Controls</h2>
+            <p className="profileVisibilityHelp">
+              Enable or disable features for your account.
+            </p>
+
+            <div className="profileVisibilityOptions">
+              <button
+                type="button"
+                className={`profileVisibilityBtn ${
+                  form.featureSettings.groupsEnabled
+                    ? "profileVisibilityBtnSelected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setForm((current) => ({
+                    ...current,
+                    featureSettings: {
+                      ...current.featureSettings,
+                      groupsEnabled: !current.featureSettings.groupsEnabled,
+                    },
+                  }))
+                }
+              >
+                Groups:{" "}
+                {form.featureSettings.groupsEnabled ? "Enabled" : "Disabled"}
+              </button>
+
+              <button
+                type="button"
+                className={`profileVisibilityBtn ${
+                  form.featureSettings.leaderboardEnabled
+                    ? "profileVisibilityBtnSelected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setForm((current) => ({
+                    ...current,
+                    featureSettings: {
+                      ...current.featureSettings,
+                      leaderboardEnabled:
+                        !current.featureSettings.leaderboardEnabled,
+                    },
+                  }))
+                }
+              >
+                Leaderboard:{" "}
+                {form.featureSettings.leaderboardEnabled
+                  ? "Enabled"
+                  : "Disabled"}
+              </button>
+            </div>
           </div>
 
           <div className="profileInterestsSection">
@@ -308,32 +397,6 @@ function Profile() {
                   </span>
                 ))
               )}
-            </div>
-          </div>
-
-          <div className="profileVisibilitySection">
-            <h2 className="profileVisibilityTitle">Profile Viewability</h2>
-
-            <div className="profileVisibilityOptions">
-              {PROFILE_VISIBILITY_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  className={`profileVisibilityBtn ${
-                    form.profileVisibility === option.value
-                      ? "profileVisibilityBtnSelected"
-                      : ""
-                  }`}
-                  onClick={() =>
-                    setForm((current) => ({
-                      ...current,
-                      profileVisibility: option.value,
-                    }))
-                  }
-                >
-                  {option.label}
-                </button>
-              ))}
             </div>
           </div>
 

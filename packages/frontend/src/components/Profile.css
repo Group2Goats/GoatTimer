@@ -75,18 +75,29 @@
 .profileInput[type="number"] {
   appearance: textfield;
 }
-.profileVisibilitySection {
+
+.profileVisibilitySection,
+.profileInterestsSection {
   margin-top: 28px;
   padding-top: 24px;
   border-top: 1.5px solid rgba(0, 8, 7, 0.12);
 }
 
-.profileVisibilityTitle {
+.profileVisibilityTitle,
+.profileInterestsTitle {
   margin: 0 0 14px;
   text-align: center;
   font-family: "EB Garamond", serif;
   font-size: clamp(1.3rem, 1.8vw, 1.8rem);
   color: var(--brand-black);
+}
+
+.profileVisibilityHelp {
+  margin: 0 0 16px;
+  text-align: center;
+  font-family: "EB Garamond", serif;
+  color: #858585;
+  font-size: 1.05rem;
 }
 
 .profileVisibilityOptions {
@@ -120,69 +131,6 @@
   background: var(--accent-purple, #9b9ece);
   color: var(--brand-black);
   border-color: var(--accent-purple, #9b9ece);
-}
-
-.profileButtons {
-  margin-top: 34px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 18px;
-}
-
-.profileButton {
-  border: none;
-  border-radius: 999px;
-  color: var(--white);
-  font-family: "EB Garamond", serif;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    transform 0.18s ease,
-    opacity 0.18s ease;
-}
-
-.profileButton:hover {
-  transform: translateY(-1px);
-  opacity: 0.92;
-}
-
-.profileSave {
-  min-width: 150px;
-  min-height: 68px;
-  padding: 0 28px;
-  background: #9b1f1f;
-  font-size: 2rem;
-}
-
-.profileLogout {
-  min-width: 150px;
-  min-height: 68px;
-  padding: 0 28px;
-  background: #7f1d1d;
-  font-size: 2rem;
-}
-
-.profileDelete {
-  min-width: 130px;
-  min-height: 68px;
-  padding: 10px 18px;
-  background: #5f0b0b;
-  font-size: 1rem;
-  line-height: 1.1;
-}
-
-.profileInterestsSection {
-  margin-top: 28px;
-  padding-top: 24px;
-  border-top: 1.5px solid rgba(0, 8, 7, 0.12);
-}
-
-.profileInterestsTitle {
-  margin: 0 0 14px;
-  text-align: center;
-  font-family: "EB Garamond", serif;
-  font-size: clamp(1.3rem, 1.8vw, 1.8rem);
-  color: var(--brand-black);
 }
 
 .profileInterestAddRow {
@@ -254,6 +202,55 @@
   line-height: 1;
 }
 
+.profileButtons {
+  margin-top: 34px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+}
+
+.profileButton {
+  border: none;
+  border-radius: 999px;
+  color: var(--white);
+  font-family: "EB Garamond", serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.profileButton:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.profileSave {
+  min-width: 150px;
+  min-height: 68px;
+  padding: 0 28px;
+  background: #9b1f1f;
+  font-size: 2rem;
+}
+
+.profileLogout {
+  min-width: 150px;
+  min-height: 68px;
+  padding: 0 28px;
+  background: #7f1d1d;
+  font-size: 2rem;
+}
+
+.profileDelete {
+  min-width: 130px;
+  min-height: 68px;
+  padding: 10px 18px;
+  background: #5f0b0b;
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
 @media (max-width: 900px) {
   .profileCard {
     padding: 26px 22px 24px;
@@ -292,14 +289,20 @@
     padding: 0 16px;
   }
 
-
-
   .profileVisibilityOptions {
     flex-direction: column;
   }
 
   .profileVisibilityBtn {
     width: 100%;
+  }
+
+  .profileInterestAddRow {
+    grid-template-columns: 1fr 48px;
+  }
+
+  .profileInterestAddBtn {
+    min-height: 48px;
   }
 
   .profileButtons {
@@ -319,12 +322,4 @@
   .profileDelete {
     line-height: 1.2;
   }
-
-  .profileInterestAddRow {
-  grid-template-columns: 1fr 48px;
-}
-
-.profileInterestAddBtn {
-  min-height: 48px;
-}
 }
