@@ -24,3 +24,10 @@ For anyone who needs motivation to focus students, professionals, business owner
    - In one terminal start the backend: npm -w backend run dev
    - In another terminal: npm -w frontend run dev
    - The backend defaults to port 5050, and the frontend dev server proxies `/api` requests there.
+
+# MISC
+UI Prototype: https://www.figma.com/design/zncXfoG6arurPuARYN6voh/Goat-Timer?node-id=0-1&p=f&t=D3qkkV7s7rP8OXkM-0
+
+Class Diagram: https://lucid.app/lucidchart/b21e47c0-d97b-4f2c-a8d7-765136d80f12/edit?page=0_0&invitationId=inv_159c0efd-5942-40aa-9582-62b534aa5c56#
+
+Demo Video: 
