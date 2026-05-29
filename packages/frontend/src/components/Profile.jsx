@@ -1,4 +1,4 @@
-//displays the user profile, logout, deletion
+// Displays the user profile, logout, deletion, and profile viewability settings.
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import "./Profile.css";
@@ -6,9 +6,30 @@ import "./Profile.css";
 const AZURE_URL =
   "https://goattimer-hgh5bxcub9hrdgha.centralus-01.azurewebsites.net";
 
+const PROFILE_VISIBILITY_OPTIONS = [
+  {
+    value: "public",
+    label: "Public",
+  },
+  {
+    value: "groups",
+    label: "People in my groups",
+  },
+  {
+    value: "private",
+    label: "Private",
+  },
+];
+
 function Profile() {
   const [user, setUser] = useState(null);
+  const [form, setForm] = useState({
+    age: "",
+    interests: "",
+    profileVisibility: "private",
+  });
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -20,6 +41,13 @@ function Profile() {
       })
       .then((data) => {
         setUser(data.user);
+        setForm({
+          age: data.user.age || "",
+          interests: data.user.interests || "",
+          profileVisibility:
+            data.user.profileVisibility ||
+            (data.user.isProfilePublic ? "public" : "private"),
+        });
         setLoading(false);
       })
       .catch((err) => {
@@ -27,6 +55,34 @@ function Profile() {
         setLoading(false);
       });
   }, []);
+
+  function handleSaveProfile() {
+    if (!user) return;
+
+    setError("");
+    setMessage("");
+
+    fetch(`${AZURE_URL}/api/users/${user._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        age: form.age ? Number(form.age) : undefined,
+        interests: form.interests,
+        profileVisibility: form.profileVisibility,
+        isProfilePublic: form.profileVisibility === "public",
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to update profile");
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data);
+        setMessage("Profile updated.");
+      })
+      .catch((err) => setError(err.message));
+  }
 
   function handleLogout() {
     const confirmed = window.confirm("Are you sure you want to log out?");
@@ -71,7 +127,7 @@ function Profile() {
     );
   }
 
-  if (error || !user) {
+  if (error && !user) {
     return (
       <div className="profilePage">
         <div className="profileContainer">
@@ -109,17 +165,30 @@ function Profile() {
 
           <div className="profileRow">
             <label className="profileLabel">Age:</label>
-            <div className="profileValue">{user.age || "—"}</div>
-          </div>
-
-          <div className="profileRow">
-            <label className="profileLabel">Group:</label>
-            <div className="profileValue">{user.group || "—"}</div>
+            <input
+              className="profileValue profileInput"
+              type="number"
+              min="0"
+              value={form.age}
+              onChange={(e) =>
+                setForm((current) => ({ ...current, age: e.target.value }))
+              }
+            />
           </div>
 
           <div className="profileRow">
             <label className="profileLabel">Interests:</label>
-            <div className="profileValue">{user.interests || "—"}</div>
+            <input
+              className="profileValue profileInput"
+              type="text"
+              value={form.interests}
+              onChange={(e) =>
+                setForm((current) => ({
+                  ...current,
+                  interests: e.target.value,
+                }))
+              }
+            />
           </div>
 
           <div className="profileRow">
@@ -129,13 +198,50 @@ function Profile() {
             </div>
           </div>
 
+          <div className="profileVisibilitySection">
+            <h2 className="profileVisibilityTitle">Profile Viewability</h2>
+
+            <div className="profileVisibilityOptions">
+              {PROFILE_VISIBILITY_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`profileVisibilityBtn ${
+                    form.profileVisibility === option.value
+                      ? "profileVisibilityBtnSelected"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    setForm((current) => ({
+                      ...current,
+                      profileVisibility: option.value,
+                    }))
+                  }
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {message && <p className="profileMessage">{message}</p>}
+          {error && <p className="profileMessage">{error}</p>}
+
           <div className="profileButtons">
+            <button
+              className="profileButton profileSave"
+              onClick={handleSaveProfile}
+            >
+              Save
+            </button>
+
             <button
               className="profileButton profileLogout"
               onClick={handleLogout}
             >
               Logout
             </button>
+
             <button
               className="profileButton profileDelete"
               onClick={handleDelete}

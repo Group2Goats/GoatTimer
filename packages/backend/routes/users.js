@@ -20,6 +20,9 @@ const allowedUserUpdateFields = [
   "totalHours",
   "weeklyHours",
   "todayHours",
+  "interests",
+  "isProfilePublic",
+  "profileVisibility",
 ];
 
 const commitmentGoals = {
@@ -162,6 +165,32 @@ router.get("/:userParam/groups", async (req, res) => {
       .sort({ createdAt: -1 });
 
     return res.json(groups);
+  } catch (error) {
+    return sendError(res, error);
+  }
+});
+
+//get public profile for one user
+router.get("/:userParam/public", requireAuth, async (req, res) => {
+  try {
+    const user = await User.findOne(getUserFilter(req.params.userParam)).select(
+      "name age interests isProfilePublic totalHours",
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json({
+      user: {
+        _id: user._id,
+        name: user.name,
+        totalHours: user.totalHours || 0,
+        isProfilePublic: user.isProfilePublic,
+        age: user.isProfilePublic ? user.age || null : null,
+        interests: user.isProfilePublic ? user.interests || "" : "",
+      },
+    });
   } catch (error) {
     return sendError(res, error);
   }

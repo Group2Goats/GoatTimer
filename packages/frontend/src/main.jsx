@@ -14,6 +14,7 @@ import RequireAuth from "./components/RequireAuth.jsx";
 import Profile from "./components/Profile.jsx";
 import CreateGroup from "./components/CreateGroup.jsx";
 import GroupDetail from "./components/GroupDetail.jsx";
+import PublicProfile from "./components/PublicProfile.jsx";
 
 const root = document.getElementById("root");
 
@@ -62,6 +63,14 @@ ReactDOM.createRoot(root).render(
         element={
           <RequireAuth>
             <GroupDetail />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/users/:userId"
+        element={
+          <RequireAuth>
+            <PublicProfile />
           </RequireAuth>
         }
       />

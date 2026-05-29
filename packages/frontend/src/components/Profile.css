@@ -56,6 +56,72 @@
   font-size: clamp(1rem, 1.2vw, 1.35rem);
 }
 
+.profileInput {
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.profileInput:focus {
+  border-color: var(--accent-purple, #9b9ece);
+}
+
+.profileInput[type="number"]::-webkit-outer-spin-button,
+.profileInput[type="number"]::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.profileInput[type="number"] {
+  appearance: textfield;
+}
+.profileVisibilitySection {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1.5px solid rgba(0, 8, 7, 0.12);
+}
+
+.profileVisibilityTitle {
+  margin: 0 0 14px;
+  text-align: center;
+  font-family: "EB Garamond", serif;
+  font-size: clamp(1.3rem, 1.8vw, 1.8rem);
+  color: var(--brand-black);
+}
+
+.profileVisibilityOptions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.profileVisibilityBtn {
+  border: 1.5px solid rgba(0, 8, 7, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--brand-black);
+  padding: 10px 20px;
+  font-family: "EB Garamond", serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.profileVisibilityBtn:hover {
+  transform: translateY(-1px);
+}
+
+.profileVisibilityBtnSelected {
+  background: var(--accent-purple, #9b9ece);
+  color: var(--brand-black);
+  border-color: var(--accent-purple, #9b9ece);
+}
+
 .profileButtons {
   margin-top: 34px;
   display: flex;
@@ -80,11 +146,19 @@
   opacity: 0.92;
 }
 
+.profileSave {
+  min-width: 150px;
+  min-height: 68px;
+  padding: 0 28px;
+  background: #9b1f1f;
+  font-size: 2rem;
+}
+
 .profileLogout {
   min-width: 150px;
   min-height: 68px;
   padding: 0 28px;
-  background: #ef5a58;
+  background: #7f1d1d;
   font-size: 2rem;
 }
 
@@ -92,7 +166,7 @@
   min-width: 130px;
   min-height: 68px;
   padding: 10px 18px;
-  background: #a70b0b;
+  background: #5f0b0b;
   font-size: 1rem;
   line-height: 1.1;
 }
@@ -135,11 +209,22 @@
     padding: 0 16px;
   }
 
+
+
+  .profileVisibilityOptions {
+    flex-direction: column;
+  }
+
+  .profileVisibilityBtn {
+    width: 100%;
+  }
+
   .profileButtons {
     flex-direction: column;
     align-items: stretch;
   }
 
+  .profileSave,
   .profileLogout,
   .profileDelete {
     width: 100%;
