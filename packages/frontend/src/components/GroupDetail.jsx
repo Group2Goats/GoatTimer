@@ -28,7 +28,14 @@ function GroupDetail() {
         if (!res.ok) throw new Error("Not logged in");
         return res.json();
       })
-      .then((data) => setUser(data.user))
+      .then((data) => {
+        if (data.user?.featureSettings?.groupsEnabled === false) {
+          navigate("/dashboard");
+          return;
+        }
+
+        setUser(data.user);
+      })
       .catch(() => navigate("/login"));
   }, [navigate]);
 

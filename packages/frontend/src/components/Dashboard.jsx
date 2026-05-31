@@ -91,9 +91,11 @@ const Dashboard = () => {
               <p className="current-date">{dateString}</p>
 
               <div className="dashboard-header-actions">
-                <Link to="/groups" className="profile-btn">
-                  Groups
-                </Link>
+                {user?.featureSettings?.groupsEnabled !== false && (
+                  <Link to="/groups" className="profile-btn">
+                    Groups
+                  </Link>
+                )}
 
                 <Link to="/profile" className="profile-btn">
                   Profile
@@ -136,7 +138,9 @@ const Dashboard = () => {
         </main>
 
         <aside className="dashboard-sidebar">
-          <Leaderboard user={user} />
+          {user?.featureSettings?.leaderboardEnabled !== false && (
+            <Leaderboard user={user} />
+          )}{" "}
         </aside>
       </div>
     </div>

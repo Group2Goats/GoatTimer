@@ -17,12 +17,12 @@ const allowedUserUpdateFields = [
   "schedule",
   "commitmentLevel",
   "age",
+  "interests",
+  "profileVisibility",
+  "featureSettings",
   "totalHours",
   "weeklyHours",
   "todayHours",
-  "interests",
-  "isProfilePublic",
-  "profileVisibility",
 ];
 
 const commitmentGoals = {
@@ -170,25 +170,42 @@ router.get("/:userParam/groups", async (req, res) => {
   }
 });
 
-//get public profile for one user
+//get profile viewer data for one user
 router.get("/:userParam/public", requireAuth, async (req, res) => {
   try {
-    const user = await User.findOne(getUserFilter(req.params.userParam)).select(
-      "name age interests isProfilePublic totalHours",
-    );
+    const profileUser = await User.findOne(
+      getUserFilter(req.params.userParam),
+    ).select("name age interests profileVisibility totalHours groups");
 
-    if (!user) {
+    if (!profileUser) {
       return res.status(404).json({ error: "User not found" });
     }
 
+    const viewer = await User.findById(req.auth.userId).select("groups");
+
+    const visibility = profileUser.profileVisibility || "private";
+    const isSelf = profileUser._id.toString() === req.auth.userId;
+
+    const viewerGroups = new Set((viewer?.groups || []).map(String));
+    const profileUserGroups = (profileUser.groups || []).map(String);
+
+    const sharesGroup = profileUserGroups.some((groupId) =>
+      viewerGroups.has(groupId),
+    );
+
+    const canViewDetails =
+      isSelf ||
+      visibility === "public" ||
+      (visibility === "groups" && sharesGroup);
+
     return res.json({
       user: {
-        _id: user._id,
-        name: user.name,
-        totalHours: user.totalHours || 0,
-        isProfilePublic: user.isProfilePublic,
-        age: user.isProfilePublic ? user.age || null : null,
-        interests: user.isProfilePublic ? user.interests || "" : "",
+        _id: profileUser._id,
+        name: profileUser.name,
+        totalHours: profileUser.totalHours || 0,
+        profileVisibility: visibility,
+        age: canViewDetails ? profileUser.age || null : null,
+        interests: canViewDetails ? profileUser.interests || [] : [],
       },
     });
   } catch (error) {
@@ -214,8 +231,19 @@ router.get("/:userParam", async (req, res) => {
 });
 
 //update user by id or email
-router.put("/:userParam", async (req, res) => {
+router.put("/:userParam", requireAuth, async (req, res) => {
   try {
+    const filter = getUserFilter(req.params.userParam);
+    const targetUser = await User.findOne(filter).select("_id");
+
+    if (!targetUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (targetUser._id.toString() !== req.auth.userId) {
+      return res.status(403).json({ error: "You can only update yourself" });
+    }
+
     const updates = getAllowedUpdates(req.body, allowedUserUpdateFields);
 
     if (Object.keys(updates).length === 0) {
@@ -224,18 +252,10 @@ router.put("/:userParam", async (req, res) => {
       });
     }
 
-    const user = await User.findOneAndUpdate(
-      getUserFilter(req.params.userParam),
-      updates,
-      {
-        new: true,
-        runValidators: true,
-      },
-    ).populate("groups");
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
+    const user = await User.findByIdAndUpdate(targetUser._id, updates, {
+      new: true,
+      runValidators: true,
+    }).populate("groups");
 
     return res.json(user);
   } catch (error) {

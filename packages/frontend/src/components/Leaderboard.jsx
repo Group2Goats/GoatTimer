@@ -1,4 +1,4 @@
-//loads and displays the global or group leaderboard with the current user's hours highlightedz
+//loads and displays the global or group leaderboard with the current user's hours highlighted
 import { useEffect, useState } from "react";
 
 const AZURE_URL =
@@ -24,7 +24,14 @@ function Leaderboard({
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
 
+  const leaderboardDisabled =
+    user?.featureSettings?.leaderboardEnabled === false;
+
   useEffect(() => {
+    if (leaderboardDisabled) {
+      return;
+    }
+
     const controller = new AbortController();
 
     async function loadLeaderboard() {
@@ -69,7 +76,11 @@ function Leaderboard({
     });
 
     return () => controller.abort();
-  }, [limit, scope, groupId]);
+  }, [limit, scope, groupId, leaderboardDisabled]);
+
+  if (leaderboardDisabled) {
+    return null;
+  }
 
   const hasEntries = entries.length > 0;
   const emptyMessage = "No study time yet. Start a session to claim a spot.";
@@ -117,12 +128,14 @@ function Leaderboard({
               >
                 {entry.rank}
               </span>
+
               <span className="player-name">
                 {entry.name}
                 {entry.isCurrentUser && (
                   <span className="current-user-label">You</span>
                 )}
               </span>
+
               <span className="player-score">
                 {formatHours(entry.totalHours)}
               </span>

@@ -19,6 +19,7 @@ const dayNames = [
   "saturday",
   "sunday",
 ];
+
 //user's weekly availability, including days, start time, end time, and timezone
 const scheduleSchema = new mongoose.Schema(
   {
@@ -95,7 +96,6 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
-    // From the diagram
     firstName: {
       type: String,
       default: "",
@@ -142,15 +142,40 @@ const userSchema = new mongoose.Schema(
     },
 
     interests: {
-      type: String,
-      default: "",
-      trim: true,
+      type: [
+        {
+          type: String,
+          trim: true,
+          maxlength: [24, "Each interest must be 24 characters or less"],
+          match: [
+            /^[a-zA-Z0-9 '&-]+$/,
+            "Interests can only contain letters, numbers, spaces, apostrophes, ampersands, and hyphens",
+          ],
+        },
+      ],
+      default: [],
+      validate: {
+        validator: (interests) => interests.length <= 10,
+        message: "You can only add up to 10 interests",
+      },
     },
 
     profileVisibility: {
       type: String,
       enum: ["public", "groups", "private"],
       default: "private",
+    },
+
+    featureSettings: {
+      groupsEnabled: {
+        type: Boolean,
+        default: true,
+      },
+
+      leaderboardEnabled: {
+        type: Boolean,
+        default: true,
+      },
     },
   },
   {

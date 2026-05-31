@@ -7,7 +7,7 @@ import Group from "../models/group.js";
 const DEFAULT_LIMIT = 5;
 const MAX_LIMIT = 50;
 
-//parse and cap leaderboard limit
+//parses and caps leaderboard limit, falling back to default if invalid
 export function getLeaderboardLimit(rawLimit) {
   const parsedLimit = Number.parseInt(rawLimit, 10);
 
@@ -17,10 +17,12 @@ export function getLeaderboardLimit(rawLimit) {
 
   return Math.min(parsedLimit, MAX_LIMIT);
 }
+
 //gets user id as a string from either a user object or raw id
 function getUserId(user) {
   return user?._id?.toString?.() || user?.toString?.() || String(user || "");
 }
+
 //converts users into ranked leaderboard entries and marks the current user
 export function mapUsersToLeaderboardEntries(users, currentUserId) {
   return users.map((user, index) => {
@@ -50,16 +52,15 @@ export async function leaderboardHandler(req, res) {
     let users;
 
     if (scope === "group" && groupId) {
-      // Validate groupId format
       if (!mongoose.Types.ObjectId.isValid(groupId)) {
         return res.status(400).json({ error: "Invalid group ID" });
       }
 
-      // Fetch the group and get its users
       const group = await Group.findById(groupId)
         .populate({
           path: "users",
-          select: "name email totalHours",
+          match: { profileVisibility: { $in: ["public", "groups"] } },
+          select: "name email totalHours profileVisibility",
           options: { sort: { totalHours: -1, name: 1 }, limit },
         })
         .lean();
@@ -70,11 +71,13 @@ export async function leaderboardHandler(req, res) {
 
       users = group.users || [];
     } else {
-      // Global leaderboard
-      users = await User.find()
+      //global leaderboard only shows public users
+      users = await User.find({
+        profileVisibility: "public",
+      })
         .sort({ totalHours: -1, name: 1 })
         .limit(limit)
-        .select("name email totalHours")
+        .select("name email totalHours profileVisibility")
         .lean();
     }
 

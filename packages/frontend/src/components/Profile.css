@@ -75,18 +75,29 @@
 .profileInput[type="number"] {
   appearance: textfield;
 }
-.profileVisibilitySection {
+
+.profileVisibilitySection,
+.profileInterestsSection {
   margin-top: 28px;
   padding-top: 24px;
   border-top: 1.5px solid rgba(0, 8, 7, 0.12);
 }
 
-.profileVisibilityTitle {
+.profileVisibilityTitle,
+.profileInterestsTitle {
   margin: 0 0 14px;
   text-align: center;
   font-family: "EB Garamond", serif;
   font-size: clamp(1.3rem, 1.8vw, 1.8rem);
   color: var(--brand-black);
+}
+
+.profileVisibilityHelp {
+  margin: 0 0 16px;
+  text-align: center;
+  font-family: "EB Garamond", serif;
+  color: #858585;
+  font-size: 1.05rem;
 }
 
 .profileVisibilityOptions {
@@ -120,6 +131,75 @@
   background: var(--accent-purple, #9b9ece);
   color: var(--brand-black);
   border-color: var(--accent-purple, #9b9ece);
+}
+
+.profileInterestAddRow {
+  display: grid;
+  grid-template-columns: 1fr 54px;
+  gap: 10px;
+  align-items: center;
+}
+
+.profileInterestInput {
+  min-width: 0;
+}
+
+.profileInterestAddBtn {
+  min-height: 54px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent-purple, #9b9ece);
+  color: var(--brand-black);
+  font-family: "EB Garamond", serif;
+  font-size: 2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.profileInterestAddBtn:hover {
+  transform: translateY(-1px);
+  opacity: 0.88;
+}
+
+.profileInterestList {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.profileInterestEmpty {
+  font-family: "EB Garamond", serif;
+  color: #858585;
+  margin: 0;
+}
+
+.profileInterestTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1.5px solid rgba(0, 8, 7, 0.16);
+  padding: 8px 12px 8px 16px;
+  font-family: "EB Garamond", serif;
+  font-size: 1.05rem;
+  color: var(--brand-black);
+}
+
+.profileInterestRemoveBtn {
+  border: none;
+  background: transparent;
+  color: #7f1d1d;
+  font-family: "EB Garamond", serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
 }
 
 .profileButtons {
@@ -209,14 +289,20 @@
     padding: 0 16px;
   }
 
-
-
   .profileVisibilityOptions {
     flex-direction: column;
   }
 
   .profileVisibilityBtn {
     width: 100%;
+  }
+
+  .profileInterestAddRow {
+    grid-template-columns: 1fr 48px;
+  }
+
+  .profileInterestAddBtn {
+    min-height: 48px;
   }
 
   .profileButtons {
