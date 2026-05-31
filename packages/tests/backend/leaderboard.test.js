@@ -60,10 +60,14 @@ describe("leaderboard route handler", () => {
       res,
     );
 
-    expect(User.find).toHaveBeenCalledOnce();
-    expect(userQuery.sort).toHaveBeenCalledWith({ totalHours: -1, name: 1 });
-    expect(userQuery.limit).toHaveBeenCalledWith(2);
-    expect(userQuery.select).toHaveBeenCalledWith("name email totalHours");
+  expect(User.find).toHaveBeenCalledWith({
+  profileVisibility: "public",
+  });
+  expect(userQuery.sort).toHaveBeenCalledWith({ totalHours: -1, name: 1 });
+  expect(userQuery.limit).toHaveBeenCalledWith(2);
+  expect(userQuery.select).toHaveBeenCalledWith(
+    "name email totalHours profileVisibility",
+  );
     expect(res.json).toHaveBeenCalledWith({
       scope: "global",
       entries: [
