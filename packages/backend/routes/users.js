@@ -38,6 +38,20 @@ function getAllowedUpdates(body, allowedFields) {
   );
 }
 
+export function normalizeUserName(name) {
+  if (typeof name !== "string") {
+    return { error: "Username is required" };
+  }
+
+  const value = name.trim();
+
+  if (!value) {
+    return { error: "Username is required" };
+  }
+
+  return { value };
+}
+
 //check if email exists
 function isDuplicateKeyError(error) {
   return error?.code === 11000;
@@ -245,6 +259,16 @@ router.put("/:userParam", requireAuth, async (req, res) => {
     }
 
     const updates = getAllowedUpdates(req.body, allowedUserUpdateFields);
+
+    if (Object.hasOwn(updates, "name")) {
+      const normalizedName = normalizeUserName(updates.name);
+
+      if (normalizedName.error) {
+        return res.status(400).json({ error: normalizedName.error });
+      }
+
+      updates.name = normalizedName.value;
+    }
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({

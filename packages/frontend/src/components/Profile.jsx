@@ -67,6 +67,7 @@ function getInterestError(value, currentInterests) {
 function Profile() {
   const [user, setUser] = useState(null);
   const [form, setForm] = useState({
+    name: "",
     age: "",
     interests: [],
     profileVisibility: "private",
@@ -90,6 +91,7 @@ function Profile() {
       .then((data) => {
         setUser(data.user);
         setForm({
+          name: data.user.name || "",
           age: data.user.age || "",
           interests: normalizeInterests(data.user.interests),
           profileVisibility: data.user.profileVisibility || "private",
@@ -141,11 +143,19 @@ function Profile() {
     setError("");
     setMessage("");
 
+    const name = form.name.trim();
+
+    if (!name) {
+      setError("Username is required");
+      return;
+    }
+
     fetch(`${AZURE_URL}/api/users/${user._id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
+        name,
         age: form.age === "" ? null : Number(form.age),
         interests: form.interests,
         profileVisibility: form.profileVisibility,
@@ -160,6 +170,7 @@ function Profile() {
         setUser(data);
         setForm((current) => ({
           ...current,
+          name: data.name || "",
           age: data.age || "",
           interests: normalizeInterests(data.interests),
           profileVisibility: data.profileVisibility || "private",
@@ -244,8 +255,18 @@ function Profile() {
       <div className="profileContainer">
         <div className="profileCard">
           <div className="profileRow">
-            <label className="profileLabel">Name:</label>
-            <div className="profileValue">{user.name || "—"}</div>
+            <label className="profileLabel" htmlFor="profile-name">
+              Username:
+            </label>
+            <input
+              id="profile-name"
+              className="profileValue profileInput"
+              type="text"
+              value={form.name}
+              onChange={(e) =>
+                setForm((current) => ({ ...current, name: e.target.value }))
+              }
+            />
           </div>
 
           <div className="profileRow">
