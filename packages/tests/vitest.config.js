@@ -18,5 +18,17 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./setupTests.js"],
+    coverage: {
+      provider: 'v8',
+
+      // Collect coverage for files outside the tests package root.
+      allowExternal: true,
+
+      // Include test files and any frontend source files they load.
+      include: ['**/*.{js,jsx}'],
+
+      // Exclude files not part of frontend coverage.
+      exclude: ['../frontend/src/main.jsx', '../frontend/src/vite-env.d.ts'],
+    },
   },
 });
