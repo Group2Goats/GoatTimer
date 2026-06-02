@@ -24,11 +24,17 @@ export default defineConfig({
       // collect coverage for files outside the tests package
       allowExternal: true,
 
-      // Include test files and any frontend source files they load.
-      include: ['**/*.{js,jsx}'],
+      // Only collect frontend source coverage
+      include: ["frontend/src/**/*.{js,jsx}"],
 
-      // Exclude files not part of frontend coverage.
-      exclude: ['../frontend/src/main.jsx', '../frontend/src/vite-env.d.ts'],
+      // Exclude frontend entry/config files and the entire backend
+      exclude: [
+        "frontend/src/main.jsx",
+        "frontend/src/vite-env.d.ts",
+        "backend/**",
+        "backend/**/*",
+      ],
+      
     },
   },
 });
