@@ -21,7 +21,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
 
-      // Collect coverage for files outside the tests package root.
+      // collect coverage for files outside the tests package
       allowExternal: true,
 
       // Include test files and any frontend source files they load.
