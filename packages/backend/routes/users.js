@@ -306,10 +306,6 @@ router.put("/:userParam", requireAuth, async (req, res) => {
   }
 });
 
-// delete a user account by id/email — called from the frontend as:
-//   fetch(`${AZURE_URL}/api/users/${user._id}`, { method: "DELETE", credentials: "include" })
-// requireAuth handles token extraction from cookie or Authorization header,
-// then we verify the caller is only deleting their own account.
 router.delete("/:userParam", requireAuth, async (req, res) => {
   try {
     const filter = getUserFilter(req.params.userParam);
