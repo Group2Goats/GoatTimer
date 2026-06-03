@@ -1,4 +1,4 @@
-//schema for users: auth fields, study goals, schedule, hours, password hashing
+//schema for users: auth fields, study goals, hours, password hashing
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
@@ -9,52 +9,6 @@ const BCRYPT_HASH_PATTERN = /^\$2[aby]\$\d{2}\$/;
 function isPasswordHash(password) {
   return typeof password === "string" && BCRYPT_HASH_PATTERN.test(password);
 }
-
-const dayNames = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
-];
-
-//user's weekly availability, including days, start time, end time, and timezone
-const scheduleSchema = new mongoose.Schema(
-  {
-    days: {
-      type: [
-        {
-          type: String,
-          enum: dayNames,
-          lowercase: true,
-          trim: true,
-        },
-      ],
-      default: [],
-    },
-
-    startTime: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    endTime: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    timezone: {
-      type: String,
-      default: "UTC",
-      trim: true,
-    },
-  },
-  { _id: false },
-);
 
 //user model fields, ensure password not present when returning data
 const userSchema = new mongoose.Schema(
@@ -111,11 +65,6 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       min: [0, "goal cannot be negative"],
-    },
-
-    schedule: {
-      type: scheduleSchema,
-      default: () => ({}),
     },
 
     totalHours: {
