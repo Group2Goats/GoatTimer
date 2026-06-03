@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import User from "../models/user.js";
 import Group from "../models/group.js";
 import requireAuth from "../middleware/requireAuth.js";
+import { AUTH_COOKIE_NAME, clearAuthCookieOptions } from "../config/auth.js";
 
 const router = express.Router();
 
@@ -86,6 +87,24 @@ function getUserFilter(userParam) {
   }
 
   return { email: value };
+}
+
+export async function deleteUserAccount(userId) {
+  const ownedGroups = await Group.find({ owner: userId }).select("_id");
+  const ownedGroupIds = ownedGroups.map((group) => group._id);
+
+  if (ownedGroupIds.length > 0) {
+    await Group.deleteMany({ _id: { $in: ownedGroupIds } });
+
+    await User.updateMany(
+      { groups: { $in: ownedGroupIds } },
+      { $pull: { groups: { $in: ownedGroupIds } } },
+    );
+  }
+
+  await Group.updateMany({ users: userId }, { $pull: { users: userId } });
+
+  return User.findByIdAndDelete(userId);
 }
 
 //update current user's commitment
@@ -282,6 +301,42 @@ router.put("/:userParam", requireAuth, async (req, res) => {
     }).populate("groups");
 
     return res.json(user);
+  } catch (error) {
+    return sendError(res, error, 400);
+  }
+});
+
+// delete a user account by id/email — called from the frontend as:
+//   fetch(`${AZURE_URL}/api/users/${user._id}`, { method: "DELETE", credentials: "include" })
+// requireAuth handles token extraction from cookie or Authorization header,
+// then we verify the caller is only deleting their own account.
+router.delete("/:userParam", requireAuth, async (req, res) => {
+  try {
+    const filter = getUserFilter(req.params.userParam);
+    const targetUser = await User.findOne(filter).select("_id");
+
+    if (!targetUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // a user may only delete their own account
+    if (targetUser._id.toString() !== req.auth.userId) {
+      return res.status(403).json({ error: "You can only delete yourself" });
+    }
+
+    const deletedUser = await deleteUserAccount(targetUser._id);
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // clear the session cookie so the client is immediately logged out
+    res.clearCookie(AUTH_COOKIE_NAME, clearAuthCookieOptions);
+
+    return res.json({
+      message: "Account deleted successfully",
+      deletedUserId: targetUser._id,
+    });
   } catch (error) {
     return sendError(res, error, 400);
   }
