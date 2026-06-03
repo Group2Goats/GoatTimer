@@ -18,9 +18,10 @@ For anyone who needs motivation to focus students, professionals, business owner
  - ensure no linting errors before pushing code
  - ### Development Enviroment
    - At root run "npm i" to install all packages
-   - in `packages/backend/.env`
+   - Copy `packages/backend/.env.example` to `packages/backend/.env`
       - Set `MONGO_URI` to the MongoDB Atlas connection string
-      - For JWT auth, set `JWT_SECRET` 
+      - Replace `<db_username>` and `<db_password>` with a MongoDB Atlas database user
+      - For JWT auth, set `JWT_SECRET` to a long random value
    - In one terminal start the backend: npm -w backend run dev
    - In another terminal: npm -w frontend run dev
    - The backend defaults to port 5050, and the frontend dev server proxies `/api` requests there.
