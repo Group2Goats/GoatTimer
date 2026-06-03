@@ -92,4 +92,28 @@ describe("Leaderboard", () => {
       expect.objectContaining({ credentials: "include" }),
     );
   });
+
+  it("renders an error message when the leaderboard request fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        mockFetchResponse({ error: "Service unavailable" }, false),
+      ),
+    );
+
+    render(<Leaderboard user={user} />);
+
+    expect(await screen.findByText(/service unavailable/i)).toBeInTheDocument();
+  });
+
+  it("renders nothing when the leaderboard is disabled for the current user", () => {
+    const disabledUser = {
+      totalHours: 42.5,
+      featureSettings: { leaderboardEnabled: false },
+    };
+
+    const { container } = render(<Leaderboard user={disabledUser} />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
 });
