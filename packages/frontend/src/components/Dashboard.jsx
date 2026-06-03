@@ -78,7 +78,7 @@ const Dashboard = () => {
   } ${now.getDate()}`;
 
   const weeklyGoal = user?.goal || 15;
-  const hoursStudied = user?.weeklyHours || 0;
+  const hoursStudied = user?.weeklyHours?.toFixed(3) || 0;
   const progress =
     weeklyGoal > 0 ? Math.round((hoursStudied / weeklyGoal) * 100) : 0;
 
