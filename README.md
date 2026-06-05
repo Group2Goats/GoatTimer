@@ -20,7 +20,7 @@ For anyone who needs motivation to focus students, professionals, business owner
    - At root run "npm i" to install all packages
    - in `packages/backend/.env`
       - Set `MONGO_URI` to the MongoDB Atlas connection string
-      - For JWT auth, set `JWT_SECRET` 
+      - For JWT auth, set `JWT_SECRET`
    - In one terminal start the backend: npm -w backend run dev
    - In another terminal: npm -w frontend run dev
    - The backend defaults to port 5050, and the frontend dev server proxies `/api` requests there.
@@ -34,4 +34,4 @@ For anyone who needs motivation to focus students, professionals, business owner
 - https://lucid.app/lucidchart/b21e47c0-d97b-4f2c-a8d7-765136d80f12/edit?viewport_loc=462%2C-16%2C2012%2C971%2C0_0&invitationId=inv_159c0efd-5942-40aa-9582-62b534aa5c56
 - last updated: 5/29/26
 
-Demo Video: 
+Demo Video: https://drive.google.com/file/d/1l0BEP8GCf-7Q2_nfO5Nssb_tYI9MhURR/view?usp=sharing
